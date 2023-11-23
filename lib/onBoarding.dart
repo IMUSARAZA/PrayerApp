@@ -18,6 +18,7 @@ class _onBoardingState extends State<onBoarding> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SizedBox(
           height: screenHeight,
