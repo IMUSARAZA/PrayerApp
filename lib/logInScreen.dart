@@ -169,7 +169,7 @@ class _logInScreenState extends State<logInScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Container(
-                  margin: EdgeInsets.only(top: 5, right: 50),
+                  margin: const EdgeInsets.only(top: 5, right: 50),
                   child: TextButton(
                     onPressed: () {
                       // Handle button press
@@ -179,7 +179,7 @@ class _logInScreenState extends State<logInScreen> {
                       // );
                     },
                     style: TextButton.styleFrom(
-                      primary: Colors.transparent, // Set text color
+                      foregroundColor: Colors.transparent, // Set text color
                     ),
                     child: const Text(
                       'Forgot Password?',

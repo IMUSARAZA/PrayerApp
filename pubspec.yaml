@@ -68,6 +68,7 @@ flutter:
     - lib\Assets\salat.png
     - lib\assets\google.png
     - lib\assets\email.png
+    - lib\assets\salat2.png
     - lib\assets\seenEye.jpg
     
   # An image asset can refer to one or more resolution-specific "variants", see

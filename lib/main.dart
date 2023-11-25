@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main(){
-  runApp(Myapp());
+  runApp(const Myapp());
 }
 
 
@@ -14,40 +14,40 @@ class Myapp extends StatelessWidget {
       home: 
       Scaffold(
       body: Padding(
-        padding: EdgeInsets.fromLTRB(20, 50, 0, 0),
+        padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
       child: 
 
        TextFormField(
-                      style: TextStyle(color: Colors.black),
+                      style: const TextStyle(color: Colors.black),
 
                       decoration: InputDecoration(
-                        hintStyle: TextStyle(
+                        hintStyle: const TextStyle(
                             color: Colors.black),
                         hintText: "Email Address",
-                        labelStyle: TextStyle(color: Colors.black),
+                        labelStyle: const TextStyle(color: Colors.black),
                         labelText: "Email",
                         disabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(50),
-                          borderSide: BorderSide(color: Colors.white, width: 1),
+                          borderSide: const BorderSide(color: Colors.white, width: 1),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(50),
-                          borderSide: BorderSide(color: Colors.white, width: 1),
+                          borderSide: const BorderSide(color: Colors.white, width: 1),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(50),
-                          borderSide: BorderSide(color: Colors.white, width: 1),
+                          borderSide: const BorderSide(color: Colors.white, width: 1),
                         ),
 
                         // Add drop shadow
                 focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: const Color.fromARGB(255, 0, 0, 0)),
+                  borderSide: const BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
                   gapPadding: 10.0,
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: Colors.white),
+                  borderSide: const BorderSide(color: Colors.white),
                   gapPadding: 10.0,
                 ),
                       ),

@@ -36,20 +36,20 @@ class _OTPState extends State<OTP> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(100, 0, 0, 0),
                 child: Image.asset(
-                  "lib/Assets/salat2.png",
+                  "lib/Assets/salat.png",
                   height: screenHeight / 2,
                   width: screenWidth / 2,
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
                 child: Text("OTP Code",
                     textAlign: TextAlign.left,
                     overflow: TextOverflow.clip,
                     style: GoogleFonts.roboto(
-                        // textStyle: Theme.of(context).textTheme.displayLarge,
                         fontSize: 48,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         fontStyle: FontStyle.normal,
                         color: const Color(0xff000000))),
               ),
@@ -75,7 +75,6 @@ class _OTPState extends State<OTP> {
                       enabledBorderColor: const Color(0xffe1ba2d),
                       focusBorderColor: const Color(0xffe1ba2d),
                       backgroundColor: const Color(0xffffffff),
-                      // borderColor: const Color(0xff000000)
                       ),
                   length: 4,
                   width: MediaQuery.of(context).size.width - 50,
@@ -83,13 +82,6 @@ class _OTPState extends State<OTP> {
                   style: const TextStyle(fontSize: 20, color: Colors.white),
                   textFieldAlignment: MainAxisAlignment.spaceAround,
                   fieldStyle: FieldStyle.underline,
-                  onCompleted: (pin) {
-                    // pinEntered = int.parse(pin);
-
-                    // setState(() {
-                    //   isPinEntered = true;
-                    // });
-                  },
                 ),
               ),
 
@@ -113,9 +105,8 @@ class _OTPState extends State<OTP> {
                   style: ElevatedButton.styleFrom(
 
                     backgroundColor: Colors.transparent,
-                    // foregroundColor: Colors.black,
                     elevation: 0,
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     ),
                   child: const Text(
                     "Resend",
@@ -123,9 +114,36 @@ class _OTPState extends State<OTP> {
                       decoration: TextDecoration.underline,
                       color: Color(0xffe1ba2d),
                     ),
-                  ))
-            ]),
+                  ),
+                  ),
+            ],
+            ),
           ),
+           Padding(
+                padding: const EdgeInsets.fromLTRB(70, 20, 65, 0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => LoginScreen()),
+                    // );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xffe1ba2d),
+                    minimumSize: const Size(400, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(30.0), 
+                    ),
+                    elevation: 5,
+                  ),
+                  child: const Text(
+                    'Enter',
+                    style: TextStyle(),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
