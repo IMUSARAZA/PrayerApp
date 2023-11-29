@@ -67,6 +67,7 @@ flutter:
     - lib\assets\google.png
     - lib\assets\email.png
     - lib\assets\seenEye.jpg
+    - lib\assets\checkBoxIcon.png
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
