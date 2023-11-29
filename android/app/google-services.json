@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "597987385187",
+    "project_id": "prayerapp-7a542",
+    "storage_bucket": "prayerapp-7a542.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597987385187:android:c20348e577469ff83bfd56",
+        "android_client_info": {
+          "package_name": "com.example.prayerapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARckFUDGHMrRpkwt2hNfIfc5QWlEtDtmA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

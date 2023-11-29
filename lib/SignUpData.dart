@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'const/appColors.dart';
 
 void main() {
   runApp(const SignUpData());
@@ -56,17 +57,17 @@ class _SignUpDataState extends State<SignUpData> {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
-                          color: Color(0xffe1ba2d), width: 1.0),
+                          color: appColors.appBasic, width: 1.0),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
-                          color: Color(0xffe1ba2d), width: 1.0),
+                          color: appColors.appBasic, width: 1.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
-                          color: Color(0xffe1ba2d), width: 1.0),
+                          color: appColors.appBasic, width: 1.0),
                     ),
                   ),
                 ),
@@ -76,7 +77,7 @@ class _SignUpDataState extends State<SignUpData> {
                 child: DropdownButtonFormField<String>(
                   icon: const Icon(Icons.male),
                   iconSize: 35,
-                  iconEnabledColor: const Color(0xffe1ba2d),
+                  iconEnabledColor: appColors.appBasic,
                   decoration: const InputDecoration(
                     hintStyle: TextStyle(
                       color: Color.fromARGB(255, 168, 160, 160),
@@ -90,17 +91,17 @@ class _SignUpDataState extends State<SignUpData> {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
-                          color: Color(0xffe1ba2d), width: 1.0),
+                          color: appColors.appBasic, width: 1.0),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
-                          color: Color(0xffe1ba2d), width: 1.0),
+                          color: appColors.appBasic, width: 1.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
-                          color: Color(0xffe1ba2d), width: 1.0),
+                          color: appColors.appBasic, width: 1.0),
                     ),
                   ),
                   value: dropdownValue,
@@ -124,7 +125,7 @@ class _SignUpDataState extends State<SignUpData> {
                 child: DropdownButtonFormField<String>(
                   icon: const Icon(Icons.add_location),
                   iconSize: 35,
-                  iconEnabledColor: const Color(0xffe1ba2d),
+                  iconEnabledColor: appColors.appBasic,
                   decoration: const InputDecoration(
                     hintStyle: TextStyle(
                       color: Color.fromARGB(255, 168, 160, 160),
@@ -138,17 +139,17 @@ class _SignUpDataState extends State<SignUpData> {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
-                          color: Color(0xffe1ba2d), width: 1.0),
+                          color: appColors.appBasic, width: 1.0),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
-                          color: Color(0xffe1ba2d), width: 1.0),
+                          color: appColors.appBasic, width: 1.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
-                          color: Color(0xffe1ba2d), width: 1.0),
+                          color: appColors.appBasic, width: 1.0),
                     ),
                   ),
                   value: dropdownValue,
@@ -187,15 +188,15 @@ class _SignUpDataState extends State<SignUpData> {
                     labelText: "Password",
                     disabledBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(color: Color(0xffe1ba2d), width: 1.0),
+                      borderSide: BorderSide(color: appColors.appBasic, width: 1.0),
                     ),
                     focusedBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(color: Color(0xffe1ba2d), width: 1.0),
+                      borderSide: BorderSide(color: appColors.appBasic, width: 1.0),
                     ),
                     enabledBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(color: Color(0xffe1ba2d), width: 1.0),
+                      borderSide: BorderSide(color: appColors.appBasic, width: 1.0),
                     ),
                     suffixIcon: GestureDetector(
                       onTap: () {
@@ -207,7 +208,7 @@ class _SignUpDataState extends State<SignUpData> {
                         padding: const EdgeInsets.fromLTRB(0, 0, 13, 0),
                         child: Icon(
                         _obscureText ? Icons.visibility : Icons.visibility_off,
-                        color: const Color(0xffe1ba2d), 
+                        color: appColors.appBasic,
                         size: 30,
                       ),
                       ),
@@ -236,15 +237,15 @@ class _SignUpDataState extends State<SignUpData> {
                     labelText: "Confirm Password",
                     disabledBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(color: Color(0xffe1ba2d), width: 1.0),
+                      borderSide: BorderSide(color: appColors.appBasic, width: 1.0),
                     ),
                     focusedBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(color: Color(0xffe1ba2d), width: 1.0),
+                      borderSide: BorderSide(color: appColors.appBasic, width: 1.0),
                     ),
                     enabledBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(color: Color(0xffe1ba2d), width: 1.0),
+                      borderSide: BorderSide(color: appColors.appBasic, width: 1.0),
                     ),
                     suffixIcon: GestureDetector(
                       onTap: () {
@@ -256,7 +257,7 @@ class _SignUpDataState extends State<SignUpData> {
                         padding: const EdgeInsets.fromLTRB(0, 0, 13, 0),
                         child: Icon(
                         _obscureText ? Icons.visibility : Icons.visibility_off,
-                        color: const Color(0xffe1ba2d), 
+                        color: appColors.appBasic,
                         size: 30,
                       ),
                       ),
@@ -276,13 +277,13 @@ class _SignUpDataState extends State<SignUpData> {
                     // );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffe1ba2d),
+                    backgroundColor: appColors.appBasic,
                     minimumSize: const Size(400, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius:
-                          BorderRadius.circular(30.0), // Set border radius
+                          BorderRadius.circular(30.0), 
                     ),
-                    elevation: 5, // Set background color
+                    elevation: 5, 
                   ),
                   child: const Text(
                     'Enter',

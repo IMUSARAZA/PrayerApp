@@ -3,8 +3,16 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:prayerapp/const/customButton.dart';
+import 'const/appColors.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+
+void main() async{
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const OTP());
 }
 
@@ -72,8 +80,8 @@ class _OTPState extends State<OTP> {
                   outlineBorderRadius: 5,
                   keyboardType: TextInputType.number,
                   otpFieldStyle: OtpFieldStyle(
-                      enabledBorderColor: const Color(0xffe1ba2d),
-                      focusBorderColor: const Color(0xffe1ba2d),
+                      enabledBorderColor: appColors.appBasic,
+                      focusBorderColor: appColors.appBasic,
                       backgroundColor: const Color(0xffffffff),
                       ),
                   length: 4,
@@ -112,7 +120,7 @@ class _OTPState extends State<OTP> {
                     "Resend",
                     style: TextStyle(
                       decoration: TextDecoration.underline,
-                      color: Color(0xffe1ba2d),
+                      color: appColors.appBasic,
                     ),
                   ),
                   ),
@@ -121,29 +129,12 @@ class _OTPState extends State<OTP> {
           ),
            Padding(
                 padding: const EdgeInsets.fromLTRB(70, 20, 65, 0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => LoginScreen()),
-                    // );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffe1ba2d),
-                    minimumSize: const Size(400, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(30.0), 
-                    ),
-                    elevation: 5,
-                  ),
-                  child: const Text(
-                    'Enter',
-                    style: TextStyle(),
-                  ),
-                ),
+                child: Material(
+                  child: InkWell(
+                child: customButton(title: 'Enter', onPressed: () {},),
               ),
+                ),
+           ),
             ],
           ),
         ),

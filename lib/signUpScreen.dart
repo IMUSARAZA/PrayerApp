@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:prayerapp/const/customButton.dart';
+import 'const/appColors.dart';
 
 void main() {
   runApp(const signUpScreen());
@@ -79,15 +81,15 @@ class _signUpScreenState extends State<signUpScreen> {
                     labelText: "Email",
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(color: Color(0xffe1ba2d), width: 1.0),
+                      borderSide: BorderSide(color: appColors.appBasic, width: 1.0),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(color: Color(0xffe1ba2d), width: 1.0),
+                      borderSide: BorderSide(color: appColors.appBasic, width: 1.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(color: Color(0xffe1ba2d), width: 1.0),
+                      borderSide: BorderSide(color: appColors.appBasic, width: 1.0),
                     ),
                   ),
                 ),
@@ -112,15 +114,15 @@ class _signUpScreenState extends State<signUpScreen> {
                     labelText: "Password",
                     disabledBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(color: Color(0xffe1ba2d), width: 1.0),
+                      borderSide: BorderSide(color: appColors.appBasic, width: 1.0),
                     ),
                     focusedBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(color: Color(0xffe1ba2d), width: 1.0),
+                      borderSide: BorderSide(color: appColors.appBasic, width: 1.0),
                     ),
                     enabledBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide: BorderSide(color: Color(0xffe1ba2d), width: 1.0),
+                      borderSide: BorderSide(color: appColors.appBasic, width: 1.0),
                     ),
                     suffixIcon: GestureDetector(
                       onTap: () {
@@ -130,7 +132,7 @@ class _signUpScreenState extends State<signUpScreen> {
                       },
                       child: Icon(
                         _obscureText ? Icons.visibility : Icons.visibility_off,
-                        color: const Color(0xffe1ba2d), 
+                        color: appColors.appBasic,
                       ),
                     ),
                   ),
@@ -138,28 +140,7 @@ class _signUpScreenState extends State<signUpScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(70, 20, 65, 0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => LoginScreen()),
-                    // );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffe1ba2d),
-                    minimumSize: const Size(400, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(30.0), // Set border radius
-                    ),
-                    elevation: 5, // Set background color
-                  ),
-                  child: const Text(
-                    'Sign Up',
-                    style: TextStyle(),
-                  ),
-                ),
+                child: customButton(title: 'Sign Up', onPressed: () {},),
               ),
             ],
           ),
