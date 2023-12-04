@@ -4,16 +4,18 @@ import 'package:otp_text_field/style.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:prayerapp/const/customButton.dart';
+import 'package:prayerapp/onBoarding.dart';
 import 'const/appColors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 
 void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const OTP());
+  runApp(const fristRun());
 }
 
 class OTP extends StatefulWidget {
@@ -29,8 +31,8 @@ class _OTPState extends State<OTP> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    print(screenHeight);
-    print(screenWidth);
+    print("Height: $screenHeight");
+    print("Widht: $screenWidth");
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -42,7 +44,7 @@ class _OTPState extends State<OTP> {
 
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(100, 0, 0, 0),
+                padding: const EdgeInsets.only(),
                 child: Image.asset(
                   "lib/Assets/salat.png",
                   height: screenHeight / 2,

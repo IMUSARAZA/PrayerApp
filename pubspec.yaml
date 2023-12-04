@@ -39,6 +39,18 @@ dependencies:
   google_fonts: ^6.1.0
   firebase_core: ^2.23.0
   firebase_analytics: ^10.7.1
+  simple_circular_progress_bar: ^1.0.2
+  http: ^1.0.0
+  flutter_qiblah: ^2.1.0
+  google_maps_flutter: ^2.5.0
+  flutter_svg: ^1.1.6
+  geolocator: ^9.0.2
+  google_nav_bar: ^5.0.6
+  flutter_islamic_icons: ^1.0.0
+  firebase_auth: ^4.15.0
+
+
+
 
 dev_dependencies:
   flutter_test:
@@ -68,10 +80,21 @@ flutter:
   #   - images/a_dot_ham.jpeg
     - lib\Assets\splashScreen.jpg
     - lib\Assets\salat.png
-    - lib\assets\google.png
-    - lib\assets\email.png
     - lib\assets\salat2.png
     - lib\assets\seenEye.jpg
+    - lib\assets\checkBoxIcon.png
+    - lib\assets\home.png
+    - lib\assets\masjid.png
+    - lib\assets\more.png
+    - lib\assets\prayer.svg
+    - lib\assets\qibla.png
+    - lib\Assets\compass.svg
+    - lib\Assets\needle.svg
+    - lib\Assets\4.svg
+    - lib\Assets\3.svg
+    - lib\Assets\5.svg
+    - lib\assets\google.png
+    - lib\assets\email.png
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

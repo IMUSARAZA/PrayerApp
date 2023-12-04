@@ -12,7 +12,12 @@
           "package_name": "com.example.prayerapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "597987385187-fjokligqkqauoboru0d6118tk90pfm0r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyARckFUDGHMrRpkwt2hNfIfc5QWlEtDtmA"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "597987385187-fjokligqkqauoboru0d6118tk90pfm0r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "597987385187-td61r7stkl860pqhmsmind27ekksmdaa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.prayerapp"
+              }
+            }
+          ]
         }
       }
     }
