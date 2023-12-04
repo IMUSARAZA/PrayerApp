@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:prayerapp/homePage.dart';
+import 'package:prayerapp/widgets/homeNavigation.dart';
 
-void main(){
-  runApp(const Myapp());
+void main() {
+  fetchData();
+  runApp(const homeNavigation());
 }
 
 

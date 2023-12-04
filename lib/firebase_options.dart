@@ -25,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -70,6 +67,17 @@ class DefaultFirebaseOptions {
     messagingSenderId: '597987385187',
     projectId: 'prayerapp-7a542',
     storageBucket: 'prayerapp-7a542.appspot.com',
+    iosClientId: '597987385187-td61r7stkl860pqhmsmind27ekksmdaa.apps.googleusercontent.com',
     iosBundleId: 'com.example.prayerapp',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyD13Slo8mT58tj7brZapCxzGaOfv42DPpY',
+    appId: '1:597987385187:ios:8c77f1c9b8ccfd633bfd56',
+    messagingSenderId: '597987385187',
+    projectId: 'prayerapp-7a542',
+    storageBucket: 'prayerapp-7a542.appspot.com',
+    iosClientId: '597987385187-c1ug6cq1o9stpars1or6u1c0lkov72iu.apps.googleusercontent.com',
+    iosBundleId: 'com.example.prayerapp.RunnerTests',
   );
 }
