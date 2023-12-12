@@ -6,22 +6,27 @@ import 'package:prayerapp/homePage.dart';
 import 'package:prayerapp/prayerRecordScreen.dart';
 import 'package:prayerapp/qiblaFinder.dart';
 
-void main() => runApp(const homeNavigation());
+
+void main() async {
+  runApp(homeNavigation()); 
+}
 
 class homeNavigation extends StatefulWidget {
-  const homeNavigation({super.key});
+
+  const homeNavigation({Key? key}) : super(key: key);
 
   @override
   State<homeNavigation> createState() => _homeNavigationState();
 }
+
 
 class _homeNavigationState extends State<homeNavigation> {
   int _selectedIndex = 0;
 
   final screens = [
     const homePage(),
-    PrayerRecordScreen(),
-    qiblaFinder(),
+    const PrayerRecordScreen(),
+    const qiblaFinder(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -56,7 +61,7 @@ class _homeNavigationState extends State<homeNavigation> {
           actions: [
           
           IconButton(
-            icon: Icon(Icons.person),
+            icon: const Icon(Icons.person),
             color: const Color(0xFF4137BD),
             iconSize: 30,
             onPressed: () {

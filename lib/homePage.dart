@@ -1,26 +1,29 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:prayerapp/Hadith.dart';
+import 'package:prayerapp/PrayerTimeCalculation.dart';
 import 'package:prayerapp/compass/loading_indicator.dart';
 import 'package:prayerapp/const/appColors.dart';
+import 'package:prayerapp/main.dart';
+import 'package:prayerapp/widgets/homeNavigation.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import 'package:http/http.dart' as http;
 
-void main() {
-  runApp(const homePage());
-}
 
 class homePage extends StatefulWidget {
-  const homePage({super.key});
+  const homePage({Key? key}) : super(key: key);
   @override
   State<homePage> createState() => _homePageState();
 }
 
-late var bookslug;
-late var number;
-
+var bookslug = 'sahih-bukhari';
+var number = 5;
+String ?nextPrayerName, nextPrayerTime;
+Timer? timer;
+DateTime? nextRemainingTime;
+Duration remainingTime = Duration.zero;
 List<Hadith> hadithList = [];
 
 class _homePageState extends State<homePage> {
@@ -30,19 +33,47 @@ class _homePageState extends State<homePage> {
     fontWeight: FontWeight.bold,
   );
 
-  ValueNotifier<double>? valueNotifier;
+  ValueNotifier<double> ?valueNotifier;
   bool? isCheckedbox = false;
   Color? checkColor = const Color(0xFF2E2E2E);
 
   @override
   void initState() {
-    super.initState();
     calculate();
-    valueNotifier = ValueNotifier(3);
+    nextCalculate();
+    startTimer();
+    remainingTime = nextRemainingTime!.difference(DateTime.now());
+    valueNotifier = ValueNotifier<double>(remainingTime.inSeconds.toDouble());
+    super.initState();
+
+  }
+
+  
+  @override
+  void dispose() {
+    timer?.cancel();
+    valueNotifier!.dispose();
+    super.dispose();
+  }
+
+  void startTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      updateRemainingTime();
+    });
+  }
+
+  void updateRemainingTime() {
+    DateTime now = DateTime.now();
+    if (prayerTimesFirst == null) {
+      return;
+    }
+    remainingTime = nextRemainingTime!.difference(now);
+    valueNotifier!.value = remainingTime.inSeconds.toDouble();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -90,16 +121,18 @@ class _homePageState extends State<homePage> {
                                   height: 100,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      const Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
                                           Padding(
                                             padding:
                                                 EdgeInsets.fromLTRB(5, 0, 0, 0),
                                             child: Text(
-                                              'Fajr',
+                                              nextPrayerName!,
                                               style: TextStyle(
                                                 fontFamily: 'Roboto',
                                                 fontSize: 20,
@@ -109,10 +142,11 @@ class _homePageState extends State<homePage> {
                                           ),
                                         ],
                                       ),
-                                      const Padding(
-                                        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(5, 0, 0, 0),
                                         child: Text(
-                                          '5: 08 am',
+                                          nextPrayerTime!,
                                           style: TextStyle(
                                             fontFamily: 'Roboto',
                                             fontSize: 20,
@@ -121,20 +155,24 @@ class _homePageState extends State<homePage> {
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 5, 0, 0),
                                         child: Checkbox(
                                           value: isCheckedbox,
                                           activeColor: checkColor,
-                                          side: const BorderSide(color: Colors.white),
+                                          side: const BorderSide(
+                                              color: Colors.white),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(50),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
                                           ),
                                           onChanged: (value) {
                                             if (isCheckedbox == true) {
                                               setState(() {
                                                 isCheckedbox = false;
-                                                checkColor = const Color.fromARGB(
-                                                    255, 45, 38, 38);
+                                                checkColor =
+                                                    const Color.fromARGB(
+                                                        255, 45, 38, 38);
                                               });
                                             } else {
                                               setState(() {
@@ -155,23 +193,48 @@ class _homePageState extends State<homePage> {
                                   width: 100,
                                   height: 100,
                                   child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 10, 0, 0),
                                     child: SimpleCircularProgressBar(
-                                      size: 70,
-                                      maxValue: 5,
-                                      startAngle: 50,
+                                      size: 150,
+                                      maxValue:
+                                          remainingTime.inSeconds.toDouble(),
+                                      startAngle: 0,
                                       progressStrokeWidth: 3,
                                       progressColors: const [
                                         appColors.appBasic,
                                       ],
-                                      animationDuration: 2,
+                                      animationDuration: 100000,
                                       backStrokeWidth: 1,
                                       backColor: Colors.transparent,
                                       mergeMode: true,
                                       valueNotifier: valueNotifier,
                                       onGetText: (value) {
+                                        int totalHours = remainingTime.inHours;
+                                        int totalMinutes =
+                                            remainingTime.inMinutes % 60;
+                                        int totalSeconds =
+                                            remainingTime.inSeconds % 60;
+
+                                        int remainingHours =
+                                            totalHours - (value / 3600).floor();
+                                        int remainingMinutes = totalMinutes -
+                                            ((value % 3600) / 60).floor();
+                                        int remainingSeconds =
+                                            totalSeconds - (value % 60).floor();
+
+                                        if (remainingSeconds < 0) {
+                                          remainingSeconds += 60;
+                                          remainingMinutes--;
+                                        }
+
+                                        if (remainingMinutes < 0) {
+                                          remainingMinutes += 60;
+                                          remainingHours--;
+                                        }
+
                                         return Text(
-                                          '${value.toInt()}',
+                                          '$remainingHours:${remainingMinutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}',
                                           style: centerTextStyle,
                                         );
                                       },
@@ -199,52 +262,60 @@ class _homePageState extends State<homePage> {
                       child: FutureBuilder<List<Hadith>>(
                         future: fetchData(),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return LoadingIndicator();
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
-                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.isEmpty) {
                             return const Text('No data available.');
                           } else {
                             List<Hadith> hadithList = snapshot.data!;
-                            
+
                             return ListView.builder(
                               itemCount: hadithList.length,
                               itemBuilder: (context, index) {
                                 Hadith hadith = hadithList[index];
                                 return Padding(
-                                  padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 15, 10, 0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const Center(
-                                        child: Text(
-                                            'Hadith of the day \n', style: TextStyle(
-                                                    fontFamily: 'Roboto',
-                                                    fontSize: 15,
-                                                    color: appColors.appBasic,
-                                                  )),
+                                        child: Text('Hadith of the day \n',
+                                            style: TextStyle(
+                                              fontFamily: 'Roboto',
+                                              fontSize: 15,
+                                              color: appColors.appBasic,
+                                            )),
                                       ),
-
+                                      Text('Book: $bookslug \n',
+                                          style: const TextStyle(
+                                              fontFamily: 'Roboto',
+                                              fontSize: 15,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w300)),
                                       Text(
-                                          'Book: $bookslug \n', style: const TextStyle(
-                                                  fontFamily: 'Roboto',
-                                                  fontSize: 15,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w300
-                                                )),
-                                      Text('Hadith Number: ${hadith.hadithNumber} \n', style: const TextStyle(
-                                                  fontFamily: 'Roboto',
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w300,
-                                                  color: Colors.white,
-                                                ),),
-                                      Text('"${hadith.hadithEnglish}"',style: const TextStyle(
-                                                  fontFamily: 'Roboto',
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Colors.white,
-                                                ),),
+                                        'Hadith Number: ${hadith.hadithNumber} \n',
+                                        style: const TextStyle(
+                                          fontFamily: 'Roboto',
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        '"${hadith.hadithEnglish}"',
+                                        style: const TextStyle(
+                                          fontFamily: 'Roboto',
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                       const SizedBox(height: 10),
                                     ],
                                   ),
@@ -267,6 +338,7 @@ class _homePageState extends State<homePage> {
 }
 
 void calculate() {
+  
   int randomBook = Random().nextInt(6) + 1;
 
   switch (randomBook) {
@@ -300,8 +372,6 @@ void calculate() {
 }
 
 Future<List<Hadith>> fetchData() async {
-  print(bookslug);
-  print(number);
 
   var apiKey = '\$2y\$10\$EKIdJOrdsb3yxKEZYyWlte2WdRm8R0rtGJYiTGRKvm1ZvWhz39e';
   var response = await http.get(Uri.parse(
@@ -312,11 +382,40 @@ Future<List<Hadith>> fetchData() async {
 
     List datalist = responseData["hadiths"]["data"];
 
-    hadithList =
-        datalist.map((element) => Hadith.fromJson(element)).toList();
+    hadithList = datalist.map((element) => Hadith.fromJson(element)).toList();
 
     return hadithList;
   } else {
     throw Exception('Failed to load');
   }
+}
+
+Future<void> nextCalculate() async {
+
+  DateTime now = DateTime.now();
+
+  List<String> prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+
+  List<DateTime> prayerTimes2 = [
+    prayerTimesFirst!['fajrTime'],
+    prayerTimesFirst!['dhuhrTime'],
+    prayerTimesFirst!['asrTime'],
+    prayerTimesFirst!['maghribTime'],
+    prayerTimesFirst!['ishaTime'],
+  ];
+
+  for (int i = 0; i < prayerTimes2.length; i++) {
+    if (now.isBefore(prayerTimes2[i])) {
+      nextPrayerName = prayerNames[i];
+      nextPrayerTime = formatTime(prayerTimes2[i]);
+      nextRemainingTime = prayerTimes2[i];
+      break;
+    }
+  }
+}
+
+String formatTime(DateTime dateTime) {
+  String amPm = dateTime.hour < 12 ? 'AM' : 'PM';
+  int hour = dateTime.hour % 12 == 0 ? 12 : dateTime.hour % 12;
+  return '$hour:${dateTime.minute.toString().padLeft(2, '0')} $amPm';
 }

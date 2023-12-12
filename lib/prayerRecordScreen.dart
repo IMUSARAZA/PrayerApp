@@ -1,18 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:prayerapp/PrayerTimeCalculation.dart';
 import 'package:prayerapp/const/appColors.dart';
+import 'package:prayerapp/main.dart';
+import 'package:prayerapp/widgets/homeNavigation.dart';
 
 void main() {
   runApp(const PrayerRecordScreen());
 }
+
+
 class PrayerRecordScreen extends StatefulWidget {
-  const PrayerRecordScreen({Key? key}) : super(key: key);
+
+  const PrayerRecordScreen({Key? key,}) : super(key: key);
 
   @override
   State<PrayerRecordScreen> createState() => _PrayerRecordScreenState();
 }
 
 class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
+
+
+  late String ?fajarTime, zuharTime, asarTime, maghribTime, ishaTime;
+
   bool isCheckedbox1 = false;
   bool isCheckedbox2 = false;
   bool isCheckedbox3 = false;
@@ -24,6 +34,28 @@ class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
   Color checkColor3 = Colors.black;
   Color checkColor4 = Colors.black;
   Color checkColor5 = Colors.black;
+
+  @override
+  void initState(){
+  prayerTimesDislay();
+  super.initState();
+  }
+
+  void prayerTimesDislay(){
+
+    fajarTime = formatTime(prayerTimesFirst!['fajrTime']);
+    zuharTime = formatTime(prayerTimesFirst!['dhuhrTime']);
+    asarTime = formatTime(prayerTimesFirst!['asrTime']);
+    maghribTime = formatTime(prayerTimesFirst!['maghribTime']);
+    ishaTime = formatTime(prayerTimesFirst!['ishaTime']);
+
+  }
+
+  String formatTime(DateTime dateTime) {
+  String amPm = dateTime.hour < 12 ? 'AM' : 'PM';
+  int hour = dateTime.hour % 12 == 0 ? 12 : dateTime.hour % 12;
+  return '$hour:${dateTime.minute.toString().padLeft(2, '0')} $amPm';
+}
 
   @override
   Widget build(BuildContext context) {
@@ -47,35 +79,35 @@ class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
                   ),
                 ),
               ),
-              buildPrayerRow("Fajr", "05:14 a.m.", isCheckedbox1, checkColor1,
+              buildPrayerRow("Fajr", "$fajarTime.", isCheckedbox1, checkColor1,
                   (value, color) {
                 setState(() {
                   isCheckedbox1 = value;
                   checkColor1 = value ? appColors.appBasic : appColors.appBasic;
                 });
               }),
-              buildPrayerRow("Zuhar", "01:15 p.m.", isCheckedbox2, checkColor2,
+              buildPrayerRow("Zuhar", "$zuharTime.", isCheckedbox2, checkColor2,
                   (value, color) {
                 setState(() {
                   isCheckedbox2 = value;
                   checkColor2 = value ? appColors.appBasic : appColors.appBasic;
                 });
               }),
-              buildPrayerRow("Asr", "04:24 p.m.", isCheckedbox3, checkColor3,
+              buildPrayerRow("Asr", "$asarTime.", isCheckedbox3, checkColor3,
                   (value, color) {
                 setState(() {
                   isCheckedbox3 = value;
                   checkColor3 = value ? appColors.appBasic : appColors.appBasic;
                 });
               }),
-              buildPrayerRow("Maghrib", "05:33 p.m.", isCheckedbox4, checkColor4,
+              buildPrayerRow("Maghrib", "$maghribTime.", isCheckedbox4, checkColor4,
                   (value, color) {
                 setState(() {
                   isCheckedbox4 = value;
                   checkColor4 = value ? appColors.appBasic : appColors.appBasic;
                 });
               }),
-              buildPrayerRow("Isha", "08:02 p.m.", isCheckedbox5, checkColor5,
+              buildPrayerRow("Isha", "$ishaTime.", isCheckedbox5, checkColor5,
                   (value, color) {
                 setState(() {
                   isCheckedbox5 = value;
