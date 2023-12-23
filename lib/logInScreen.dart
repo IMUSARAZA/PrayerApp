@@ -1,8 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:prayerapp/firebase_options.dart';
+import 'package:prayerapp/onBoarding.dart';
 
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const logInScreen());
 }
+
+  User? _user;
+
 
 class logInScreen extends StatefulWidget {
   const logInScreen({super.key});
@@ -13,6 +25,10 @@ class logInScreen extends StatefulWidget {
 
 class _logInScreenState extends State<logInScreen> {
   bool _obscureText = true;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +80,7 @@ class _logInScreenState extends State<logInScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(30, 5, 40, 5),
                 child: TextFormField(
+                  controller: emailController,
                   style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
                     hintStyle: TextStyle(
@@ -93,6 +110,7 @@ class _logInScreenState extends State<logInScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(30, 5, 40, 5),
                 child: TextFormField(
+                  controller: passwordController,
                   obscureText: _obscureText,
                   enableSuggestions: false,
                   autocorrect: false,
@@ -146,6 +164,8 @@ class _logInScreenState extends State<logInScreen> {
                           //   MaterialPageRoute(
                           //       builder: (context) => LoginScreen()),
                           // );
+
+                          logIn();
                       },
                
               style: ElevatedButton.styleFrom(
@@ -199,4 +219,18 @@ class _logInScreenState extends State<logInScreen> {
       ),
     );
   }
+
+
+void logIn() async{
+
+    _user = await signInWithEmailPass(emailController.text, passwordController.text);
+
+  if(_user != null){
+    print("Logged In Succesfully");
+  }
+  else{
+    print("User does not exist");
+  }
+
+}
 }

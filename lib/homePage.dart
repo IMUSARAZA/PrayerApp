@@ -3,24 +3,26 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:prayerapp/Hadith.dart';
-import 'package:prayerapp/PrayerTimeCalculation.dart';
 import 'package:prayerapp/compass/loading_indicator.dart';
 import 'package:prayerapp/const/appColors.dart';
 import 'package:prayerapp/main.dart';
 import 'package:prayerapp/widgets/homeNavigation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import 'package:http/http.dart' as http;
+import 'package:jhijri/jHijri.dart';
 
 
 class homePage extends StatefulWidget {
-  const homePage({Key? key}) : super(key: key);
+  final String? userLocation;
+  const homePage({this.userLocation, Key? key}) : super(key: key);
   @override
   State<homePage> createState() => _homePageState();
 }
 
 var bookslug = 'sahih-bukhari';
 var number = 5;
-String ?nextPrayerName, nextPrayerTime;
+String? nextPrayerName, nextPrayerTime, islamicDate;
 Timer? timer;
 DateTime? nextRemainingTime;
 Duration remainingTime = Duration.zero;
@@ -33,22 +35,25 @@ class _homePageState extends State<homePage> {
     fontWeight: FontWeight.bold,
   );
 
-  ValueNotifier<double> ?valueNotifier;
+  ValueNotifier<double>? valueNotifier;
   bool? isCheckedbox = false;
   Color? checkColor = const Color(0xFF2E2E2E);
 
   @override
   void initState() {
+    if (prayerTimesFirst == null) {
+      print('Program war gya');
+      return;
+    }
     calculate();
     nextCalculate();
     startTimer();
     remainingTime = nextRemainingTime!.difference(DateTime.now());
+    // Set the ValueNotifier to the maximum value initially
     valueNotifier = ValueNotifier<double>(remainingTime.inSeconds.toDouble());
     super.initState();
-
   }
 
-  
   @override
   void dispose() {
     timer?.cancel();
@@ -57,26 +62,28 @@ class _homePageState extends State<homePage> {
   }
 
   void startTimer() {
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       updateRemainingTime();
     });
   }
 
   void updateRemainingTime() {
-    DateTime now = DateTime.now();
-    if (prayerTimesFirst == null) {
-      return;
-    }
-    remainingTime = nextRemainingTime!.difference(now);
-    valueNotifier!.value = remainingTime.inSeconds.toDouble();
+  DateTime now = DateTime.now();
+  if (nextRemainingTime == null) {
+    return;
   }
+  remainingTime = nextRemainingTime!.difference(now);
+}
+
 
   @override
   Widget build(BuildContext context) {
-
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.white,
         body: Container(
           child: SingleChildScrollView(
             child: Column(
@@ -90,21 +97,21 @@ class _homePageState extends State<homePage> {
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       width: 350.0,
-                      height: 180.0,
+                      height: 200.0,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
-                                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                                 child: Text(
-                                  'Next',
-                                  style: TextStyle(
+                                  '$islamicDate',
+                                  style: const TextStyle(
                                     color: Color(0xffe1ba2d),
-                                    fontSize: 20,
+                                    fontSize: 15,
                                     fontFamily: 'Roboto',
                                   ),
                                 ),
@@ -118,7 +125,7 @@ class _homePageState extends State<homePage> {
                                 padding: const EdgeInsets.fromLTRB(10, 5, 0, 0),
                                 child: Container(
                                   width: 100,
-                                  height: 100,
+                                  // height: 200,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
@@ -127,27 +134,45 @@ class _homePageState extends State<homePage> {
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
+                                            
                                         children: [
+                                          IconButton(
+                                            icon:
+                                                const Icon(Icons.location_pin),
+                                            color: appColors.appBasic,
+                                            iconSize: 25,
+                                            onPressed: () {},
+                                          ),
+                                          Text(
+                                            '${widget.userLocation}',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      
                                           Padding(
-                                            padding:
-                                                EdgeInsets.fromLTRB(5, 0, 0, 0),
+                                            padding: const EdgeInsets.fromLTRB(
+                                                5, 0, 0, 0),
                                             child: Text(
                                               nextPrayerName!,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontFamily: 'Roboto',
                                                 fontSize: 20,
                                                 color: Colors.white,
                                               ),
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        
                                       Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(5, 0, 0, 0),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            5, 0, 0, 0),
                                         child: Text(
                                           nextPrayerTime!,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontFamily: 'Roboto',
                                             fontSize: 20,
                                             color: Colors.white,
@@ -156,7 +181,7 @@ class _homePageState extends State<homePage> {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.fromLTRB(
-                                            0, 5, 0, 0),
+                                            0, 0, 0, 0),
                                         child: Checkbox(
                                           value: isCheckedbox,
                                           activeColor: checkColor,
@@ -197,14 +222,13 @@ class _homePageState extends State<homePage> {
                                         const EdgeInsets.fromLTRB(0, 10, 0, 0),
                                     child: SimpleCircularProgressBar(
                                       size: 150,
-                                      maxValue:
-                                          remainingTime.inSeconds.toDouble(),
+                                      // maxValue: remainingTime.inSeconds.toDouble(),
                                       startAngle: 0,
                                       progressStrokeWidth: 3,
                                       progressColors: const [
                                         appColors.appBasic,
                                       ],
-                                      animationDuration: 100000,
+                                      animationDuration: 10000,
                                       backStrokeWidth: 1,
                                       backColor: Colors.transparent,
                                       mergeMode: true,
@@ -254,76 +278,90 @@ class _homePageState extends State<homePage> {
                   child: Center(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2E2E2E),
                         borderRadius: BorderRadius.circular(20.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                       ),
-                      width: 350.0,
-                      height: 200.0,
-                      child: FutureBuilder<List<Hadith>>(
-                        future: fetchData(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return LoadingIndicator();
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return const Text('No data available.');
-                          } else {
-                            List<Hadith> hadithList = snapshot.data!;
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors
+                              .white, 
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        width: 350.0,
+                        height: screenHeight / 2 - 100,
+                        child: FutureBuilder<List<Hadith>>(
+                          future: fetchData(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return LoadingIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return const Text('No data available.');
+                            } else {
+                              List<Hadith> hadithList = snapshot.data!;
 
-                            return ListView.builder(
-                              itemCount: hadithList.length,
-                              itemBuilder: (context, index) {
-                                Hadith hadith = hadithList[index];
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 15, 10, 0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Center(
-                                        child: Text('Hadith of the day \n',
-                                            style: TextStyle(
-                                              fontFamily: 'Roboto',
-                                              fontSize: 15,
-                                              color: appColors.appBasic,
-                                            )),
-                                      ),
-                                      Text('Book: $bookslug \n',
+                              return ListView.builder(
+                                itemCount: hadithList.length,
+                                itemBuilder: (context, index) {
+                                  Hadith hadith = hadithList[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        10, 15, 10, 0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Center(
+                                          child: Text('Hadith of the day \n',
+                                              style: TextStyle(
+                                                fontFamily: 'Roboto',
+                                                fontSize: 20,
+                                                color: appColors.appBasic,
+                                              )),
+                                        ),
+                                        Text('Book: $bookslug \n',
+                                            style: const TextStyle(
+                                                fontFamily: 'Roboto',
+                                                fontSize: 15,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w300)),
+                                        Text(
+                                          'Hadith Number: ${hadith.hadithNumber} \n',
                                           style: const TextStyle(
-                                              fontFamily: 'Roboto',
-                                              fontSize: 15,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w300)),
-                                      Text(
-                                        'Hadith Number: ${hadith.hadithNumber} \n',
-                                        style: const TextStyle(
-                                          fontFamily: 'Roboto',
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w300,
-                                          color: Colors.white,
+                                            fontFamily: 'Roboto',
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w300,
+                                            color: Colors.black,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        '"${hadith.hadithEnglish}"',
-                                        style: const TextStyle(
-                                          fontFamily: 'Roboto',
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.white,
+                                        Text(
+                                          '"${hadith.hadithEnglish}"',
+                                          style: const TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal,
+                                            color: Colors.black,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          }
-                        },
+                                        const SizedBox(height: 10),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            }
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -338,7 +376,81 @@ class _homePageState extends State<homePage> {
 }
 
 void calculate() {
-  
+  final jHijri = JHijri.now();
+  String digitsBetweenDashes = '';
+  String digitsBeforeFirstDash = '';
+  String digitsAfterSecondDash = '';
+  String? monthName;
+
+  String inputString = jHijri.fullDate;
+
+  RegExp regExp = RegExp(r'(\d+)-(\d+)-(\d+)');
+
+  Match? match = regExp.firstMatch(inputString) as Match?;
+
+  if (match != null) {
+    digitsBeforeFirstDash = match.group(1)!;
+    digitsBetweenDashes = match.group(2)!;
+    digitsAfterSecondDash = match.group(3)!;
+  } else {
+    print("No match found");
+  }
+
+  switch (int.parse(digitsBetweenDashes)) {
+    case 1:
+      monthName = 'Muharram';
+      break;
+
+    case 2:
+      monthName = 'Safar';
+      break;
+
+    case 3:
+      monthName = 'Rabi al-Awwal';
+      break;
+
+    case 4:
+      monthName = 'Rabi al-Thani';
+      break;
+
+    case 5:
+      monthName = 'Jumada al-Awwal';
+      break;
+
+    case 6:
+      monthName = 'Jumada al-Thani';
+      break;
+
+    case 7:
+      monthName = 'Rajab';
+      break;
+
+    case 8:
+      monthName = 'Shaban';
+      break;
+
+    case 9:
+      monthName = 'Ramadan';
+      break;
+
+    case 10:
+      monthName = 'Shawwal';
+      break;
+
+    case 11:
+      monthName = 'Dhu al-Qadah';
+      break;
+
+    case 12:
+      monthName = 'Dhu al-Hijjah';
+      break;
+  }
+
+  islamicDate =
+      digitsBeforeFirstDash + ' ' + monthName! + ' ' + digitsAfterSecondDash;
+
+  print(islamicDate);
+
   int randomBook = Random().nextInt(6) + 1;
 
   switch (randomBook) {
@@ -372,26 +484,35 @@ void calculate() {
 }
 
 Future<List<Hadith>> fetchData() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  int lastFetchTime = prefs.getInt('lastFetchTime') ?? 0;
 
-  var apiKey = '\$2y\$10\$EKIdJOrdsb3yxKEZYyWlte2WdRm8R0rtGJYiTGRKvm1ZvWhz39e';
-  var response = await http.get(Uri.parse(
-      "https://hadithapi.com/public/api/hadiths?apiKey=$apiKey&book=$bookslug&chapter=$number&paginate=1"));
+  if (DateTime.now().millisecondsSinceEpoch - lastFetchTime > 24 * 60 * 60 * 1000) {
+    var apiKey = '\$2y\$10\$EKIdJOrdsb3yxKEZYyWlte2WdRm8R0rtGJYiTGRKvm1ZvWhz39e';
+    var response = await http.get(Uri.parse(
+        "https://hadithapi.com/public/api/hadiths?apiKey=$apiKey&book=$bookslug&chapter=$number&paginate=1"));
 
-  if (response.statusCode == 200) {
-    final dynamic responseData = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      final dynamic responseData = jsonDecode(response.body);
 
-    List datalist = responseData["hadiths"]["data"];
+      List datalist = responseData["hadiths"]["data"];
 
-    hadithList = datalist.map((element) => Hadith.fromJson(element)).toList();
+      hadithList = datalist.map((element) => Hadith.fromJson(element)).toList();
 
-    return hadithList;
+      prefs.setInt('lastFetchTime', DateTime.now().millisecondsSinceEpoch);
+
+      return hadithList;
+    } else {
+      throw Exception('Failed to load');
+    }
   } else {
-    throw Exception('Failed to load');
+    return hadithList;
   }
 }
 
-Future<void> nextCalculate() async {
 
+
+void nextCalculate() {
   DateTime now = DateTime.now();
 
   List<String> prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
@@ -406,13 +527,20 @@ Future<void> nextCalculate() async {
 
   for (int i = 0; i < prayerTimes2.length; i++) {
     if (now.isBefore(prayerTimes2[i])) {
+      print(prayerNames[i]);
       nextPrayerName = prayerNames[i];
       nextPrayerTime = formatTime(prayerTimes2[i]);
       nextRemainingTime = prayerTimes2[i];
       break;
+    } else if (i == prayerTimes2.length - 1) {
+      nextPrayerName = prayerNames[0]; 
+      nextPrayerTime = formatTime(prayerTimesFirst!['fajrTime']
+          .add(Duration(days: 1))); 
+      nextRemainingTime = prayerTimesFirst!['fajrTime'].add(Duration(days: 1));
     }
   }
 }
+
 
 String formatTime(DateTime dateTime) {
   String amPm = dateTime.hour < 12 ? 'AM' : 'PM';

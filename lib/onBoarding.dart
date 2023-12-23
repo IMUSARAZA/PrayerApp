@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:prayerapp/SignUpData.dart';
+import 'package:prayerapp/logInScreen.dart';
+import 'package:prayerapp/signUpScreen.dart';
 import 'package:prayerapp/widgets/homeNavigation.dart';
 
-void main() {
-  runApp(const fristRun());
-}
+// void main() {
+//   runApp(const fristRun());
+// }
 
 
 class fristRun extends StatefulWidget {
@@ -31,10 +34,12 @@ class onBoarding extends StatefulWidget {
   State<onBoarding> createState() => _onBoardingState();
 }
 
-class _onBoardingState extends State<onBoarding> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User? _user;
+
+class _onBoardingState extends State<onBoarding> {
+  
 
   @override
   void initState() {
@@ -46,7 +51,7 @@ class _onBoardingState extends State<onBoarding> {
       if (_user != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => homeNavigation()),
+          MaterialPageRoute(builder: (context) => SignUpData(_user!.email!)),
         );
       }
     });
@@ -91,14 +96,14 @@ class _onBoardingState extends State<onBoarding> {
                           height: 60,
                           child: const Row(
                             children: [
-                              // SizedBox(width: 20), 
-                              // Image(
-                              //   image: AssetImage('lib/assets/goole.png'),
-                              //   alignment: Alignment.center,
-                              //   height: 33,
-                              //   width: 32,
-                              //   fit: BoxFit.cover,
-                              // ),
+                              SizedBox(width: 20), 
+                              Image(
+                                image: AssetImage('lib/assets/google.png'),
+                                alignment: Alignment.center,
+                                height: 33,
+                                width: 32,
+                                fit: BoxFit.cover,
+                              ),
                               SizedBox(width: 20), 
                               Text(
                                 "Sign up with Google",
@@ -115,7 +120,13 @@ class _onBoardingState extends State<onBoarding> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(70, 20, 65, 0),
                       child: MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => signUpScreen()),
+                                );
+                        },
                         color: const Color(0xffe1ba2d),
                         elevation: 1,
                         shape: RoundedRectangleBorder(
@@ -127,14 +138,14 @@ class _onBoardingState extends State<onBoarding> {
                         height: 60,
                         child: const Row(
                           children: [
-                            // SizedBox(width: 20), 
-                            // Image(
-                            //   image: AssetImage('lib/assets/email.png'),
-                            //   alignment: Alignment.center,
-                            //   height: 33,
-                            //   width: 32,
-                            //   fit: BoxFit.cover,
-                            // ),
+                            SizedBox(width: 20), 
+                            Image(
+                              image: AssetImage('lib/assets/email.png'),
+                              alignment: Alignment.center,
+                              height: 33,
+                              width: 32,
+                              fit: BoxFit.cover,
+                            ),
                             SizedBox(width: 20), 
                             Text(
                               "Sign up with Email",
@@ -166,11 +177,11 @@ class _onBoardingState extends State<onBoarding> {
                             const SizedBox(width: 2),
                             TextButton(
                               onPressed: () {
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //       builder: (context) => LoginScreen()),
-                                // );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => logInScreen()),
+                                );
                               },
                               style: ButtonStyle(
                                 side: MaterialStateProperty.all(
@@ -194,7 +205,11 @@ class _onBoardingState extends State<onBoarding> {
       ),
     );
   }
-  void handleGooleSignIn(){
+  
+  
+} 
+
+void handleGooleSignIn(){
 
 
   try{
@@ -207,6 +222,31 @@ class _onBoardingState extends State<onBoarding> {
 
 
 }
+
+Future<User?> signUpWithEmailPass(String email, String password) async{
+
+  try{
+    UserCredential credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    return credential.user;
+  }
+  catch(e) {
+    print("Some Error Occured");
+  }
+  return null;
+
 }
 
 
+
+Future<User?> signInWithEmailPass(String email, String password) async{
+
+  try{
+    UserCredential credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+    return credential.user;
+  }
+  catch(e) {
+    print("Some Error Occured");
+  }
+  return null;
+
+}
