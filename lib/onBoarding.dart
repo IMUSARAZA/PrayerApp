@@ -98,7 +98,7 @@ class _onBoardingState extends State<onBoarding> {
                             children: [
                               SizedBox(width: 20), 
                               Image(
-                                image: AssetImage('lib/assets/google.png'),
+                                image: AssetImage('lib/assets/salat.png'),
                                 alignment: Alignment.center,
                                 height: 33,
                                 width: 32,
@@ -140,7 +140,7 @@ class _onBoardingState extends State<onBoarding> {
                           children: [
                             SizedBox(width: 20), 
                             Image(
-                              image: AssetImage('lib/assets/email.png'),
+                              image: AssetImage('lib/assets/salat.png'),
                               alignment: Alignment.center,
                               height: 33,
                               width: 32,

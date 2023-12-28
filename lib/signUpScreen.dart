@@ -58,96 +58,98 @@ class _signUpScreenState extends State<signUpScreen> {
         body: SizedBox(
           height: screenHeight,
           width: screenWidth,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
-                child: Image.asset(
-                  "lib/Assets/salat.png",
-                  height: screenHeight / 2 - 100,
-                  width: screenWidth / 2,
-                ),
-              ),
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Align(
-                        alignment: Alignment.centerLeft,
-                      ),
-                      Text(
-                        'Sign Up',
-                        style: GoogleFonts.roboto(
-                            fontSize: 48,
-                            fontWeight: FontWeight.w700,
-                            fontStyle: FontStyle.normal,
-                            color: const Color(0xff000000)),
-                      ),
-                      Text("To get started, enter your Email",
-                          style: GoogleFonts.roboto(
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                              fontStyle: FontStyle.normal,
-                              color: const Color(0xff000000))),
-                    ],
-                  )),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(30, 30, 40, 20),
-                child: TextFormField(
-                  controller: emailController,
-                  style: GoogleFonts.roboto(color: Colors.black),
-                  decoration: const InputDecoration(
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 168, 160, 160),
-                    ),
-                    hintText: "Enter your email",
-                    labelStyle: TextStyle(color: Colors.black),
-                    floatingLabelStyle: TextStyle(
-                      color: Colors.black,
-                    ),
-                    labelText: "Email",
-                    disabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide:
-                          BorderSide(color: appColors.appBasic, width: 1.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide:
-                          BorderSide(color: appColors.appBasic, width: 1.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                      borderSide:
-                          BorderSide(color: appColors.appBasic, width: 1.0),
-                    ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  child: Image.asset(
+                    "lib/Assets/salat.png",
+                    height: screenHeight / 2 - 100,
+                    width: screenWidth / 2,
                   ),
-                  onChanged: (value) => email = value,
                 ),
-              ),
-              
-              Padding(
-                padding: const EdgeInsets.fromLTRB(70, 20, 65, 0),
-                child: customButton(
-                  title: 'Sign Up', 
-                  onPressed: () {
-                    if (email.isNotEmpty) {
-                      getOTP();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OTP(otpCode, emailController.text),
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Align(
+                          alignment: Alignment.centerLeft,
                         ),
-                      );
-                    } else {
-                      print('Email is empty');
-                    }
-                  },
+                        Text(
+                          'Sign Up',
+                          style: GoogleFonts.roboto(
+                              fontSize: 48,
+                              fontWeight: FontWeight.w700,
+                              fontStyle: FontStyle.normal,
+                              color: const Color(0xff000000)),
+                        ),
+                        Text("To get started, enter your Email",
+                            style: GoogleFonts.roboto(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                fontStyle: FontStyle.normal,
+                                color: const Color(0xff000000))),
+                      ],
+                    )),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 30, 40, 20),
+                  child: TextFormField(
+                    controller: emailController,
+                    style: GoogleFonts.roboto(color: Colors.black),
+                    decoration: const InputDecoration(
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 168, 160, 160),
+                      ),
+                      hintText: "Enter your email",
+                      labelStyle: TextStyle(color: Colors.black),
+                      floatingLabelStyle: TextStyle(
+                        color: Colors.black,
+                      ),
+                      labelText: "Email",
+                      disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        borderSide:
+                            BorderSide(color: appColors.appBasic, width: 1.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        borderSide:
+                            BorderSide(color: appColors.appBasic, width: 1.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        borderSide:
+                            BorderSide(color: appColors.appBasic, width: 1.0),
+                      ),
+                    ),
+                    onChanged: (value) => email = value,
+                  ),
                 ),
-              ),
-            ],
+                
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(70, 20, 65, 0),
+                  child: customButton(
+                    title: 'Sign Up', 
+                    onPressed: () {
+                      if (email.isNotEmpty) {
+                        getOTP();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OTP(otpCode, emailController.text),
+                          ),
+                        );
+                      } else {
+                        print('Email is empty');
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );

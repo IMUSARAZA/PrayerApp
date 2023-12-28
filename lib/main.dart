@@ -5,6 +5,7 @@ import 'package:prayerapp/PrayerTimeCalculation.dart';
 import 'package:prayerapp/firebase_options.dart';
 import 'package:prayerapp/homePage.dart';
 import 'package:prayerapp/onBoarding.dart';
+import 'package:prayerapp/signUpScreen.dart';
 import 'package:prayerapp/widgets/homeNavigation.dart';
 
 late Map<String, dynamic> ?prayerTimesFirst;
@@ -22,7 +23,8 @@ void main() async {
 
   print(prayerTimesFirst);
   
-  runApp(const fristRun());   // ONBOARDING
+  // runApp(const fristRun());   // ONBOARDING
+  runApp(const homeNavigation("Lahore"));
 }
 
 

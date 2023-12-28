@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:prayerapp/PrayerTimeCalculation.dart';
 import 'package:prayerapp/const/appColors.dart';
 import 'package:prayerapp/main.dart';
+import 'package:prayerapp/services/Database_service.dart';
 import 'package:prayerapp/widgets/homeNavigation.dart';
 
 void main() {
@@ -16,12 +18,11 @@ class PrayerRecordScreen extends StatefulWidget {
 
   @override
   State<PrayerRecordScreen> createState() => _PrayerRecordScreenState();
+
 }
 
 class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
-
-
-  late String ?fajarTime, zuharTime, asarTime, maghribTime, ishaTime;
+  late String? fajarTime, zuharTime, asarTime, maghribTime, ishaTime;
 
   bool isCheckedbox1 = false;
   bool isCheckedbox2 = false;
@@ -35,11 +36,21 @@ class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
   Color checkColor4 = Colors.black;
   Color checkColor5 = Colors.black;
 
+  late DatabaseService _databaseService;
+
+  List<Map<String, dynamic>> _cachedPrayerData = [];
+
+
   @override
-  void initState(){
-  prayerTimesDislay();
+void initState() {
   super.initState();
-  }
+  _databaseService = DatabaseService();
+  prayerTimesDislay();
+  loadPrayerData();
+  updateUIWithPrayerData(_cachedPrayerData); 
+}
+
+
 
   void prayerTimesDislay(){
 
@@ -56,6 +67,97 @@ class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
   int hour = dateTime.hour % 12 == 0 ? 12 : dateTime.hour % 12;
   return '$hour:${dateTime.minute.toString().padLeft(2, '0')} $amPm';
 }
+
+void loadPrayerData() async {
+  String userId = 'musarazach@gmail.com'; 
+  if (_cachedPrayerData.isNotEmpty) {
+    updateUIWithPrayerData(_cachedPrayerData);
+  }
+
+  List<Map<String, dynamic>> prayerData = await _databaseService.getPrayerData(userId);
+  print("Retrieved Prayer Data: $prayerData"); 
+
+  updateUIWithPrayerData(prayerData);
+  _cachedPrayerData = prayerData;
+}
+
+
+  void updateUIWithPrayerData(List<Map<String, dynamic>> prayerData) {
+  for (var data in prayerData) {
+    String prayerName = data['prayerName'];
+    bool isOffered = data['isOffered'];
+    DateTime storedDate = (data['date'] as Timestamp).toDate();
+
+    if (isSameDay(DateTime.now(), storedDate)) {
+      updateCheckboxState(prayerName, isOffered);
+    }
+  }
+}
+
+bool isSameDay(DateTime date1, DateTime date2) {
+  return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
+}
+
+void resetCheckboxStates() {
+  setState(() {
+    isCheckedbox1 = false;
+    isCheckedbox2 = false;
+    isCheckedbox3 = false;
+    isCheckedbox4 = false;
+    isCheckedbox5 = false;
+
+    checkColor1 = Colors.black;
+    checkColor2 = Colors.black;
+    checkColor3 = Colors.black;
+    checkColor4 = Colors.black;
+    checkColor5 = Colors.black;
+  });
+}
+
+
+  void updateCheckboxState(String prayerName, bool isOffered) {
+    switch (prayerName) {
+      case 'Fajr':
+        setState(() {
+          isCheckedbox1 = isOffered;
+          checkColor1 = isOffered ? appColors.appBasic : appColors.appBasic;
+        });
+        break;
+      case 'Zuhar':
+        setState(() {
+          isCheckedbox2 = isOffered;
+          checkColor2 = isOffered ? appColors.appBasic : appColors.appBasic;
+        });
+        break;
+      case 'Asr':
+        setState(() {
+          isCheckedbox3 = isOffered;
+          checkColor3 = isOffered ? appColors.appBasic : appColors.appBasic;
+        });
+        break;
+      case 'Maghrib':
+        setState(() {
+          isCheckedbox4 = isOffered;
+          checkColor4 = isOffered ? appColors.appBasic : appColors.appBasic;
+        });
+        break;
+      case 'Isha':
+        setState(() {
+          isCheckedbox5 = isOffered;
+          checkColor5 = isOffered ? appColors.appBasic : appColors.appBasic;
+        });
+        break;
+    }
+  }
+
+  void savePrayerData(String prayerName, bool isOffered) async {
+    String userId = 'musarazach@gmail.com'; 
+    await _databaseService.addPrayerData(
+      userId: userId,
+      prayerName: prayerName,
+      isOffered: isOffered,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,61 +273,63 @@ class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
   }
 
   Widget buildPrayerRow(
-    String prayerName,
-    String prayerTime,
-    bool isChecked,
-    Color checkColor,
-    void Function(bool, Color) onChanged,
-  ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 24, 30, 0),
-          child: Transform.scale(
-            scale: 1.5,
-            child: Checkbox(
-              value: isChecked,
-              activeColor: checkColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50.0),
-                side: BorderSide(color: appColors.appBasic),
-              ),
-              onChanged: (value) {
-                onChanged(value!, checkColor);
-              },
+  String prayerName,
+  String prayerTime,
+  bool isChecked,
+  Color checkColor,
+  void Function(bool, Color) onChanged,
+) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(20, 24, 30, 0),
+        child: Transform.scale(
+          scale: 1.5,
+          child: Checkbox(
+            value: isChecked,
+            activeColor: checkColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0),
+              side: BorderSide(color: appColors.appBasic),
+            ),
+            onChanged: (value) async {
+              onChanged(value!, checkColor);
+              // Save prayer data when the checkbox is checked or unchecked
+              savePrayerData(prayerName, value);
+            },
+          ),
+        ),
+      ),
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
+          child: Text(
+            prayerName,
+            style: GoogleFonts.roboto(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
-            child: Text(
-              prayerName,
-              style: GoogleFonts.roboto(
-                color: Colors.black,
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
+      ),
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
+          child: Text(
+            prayerTime,
+            style: GoogleFonts.roboto(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
-            child: Text(
-              prayerTime,
-              style: GoogleFonts.roboto(
-                color: Colors.black,
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 
   Widget buildLinearProgress(String title, double value) {
     return Row(

@@ -39,7 +39,7 @@ dependencies:
   google_fonts: ^4.0.0
   firebase_core: ^2.23.0
   firebase_analytics: ^10.7.1
-  simple_circular_progress_bar: ^1.0.2
+  # simple_circular_progress_bar: ^1.0.2
   http: ^0.13.5
   flutter_qiblah: ^2.1.0
   google_maps_flutter: ^2.5.0
@@ -58,10 +58,11 @@ dependencies:
   jhijri_picker: ^1.0.1
   csc_picker: ^0.2.7
   shared_preferences: ^2.2.2
-  mapbox_map_gl: ^0.0.8
+  # mapbox_map_gl: ^0.0.8
   plugin_platform_interface: ^2.1.7
   flutter_map: ^2.0.0
   latlong2: ^0.8.0
+  google_mobile_ads: ^4.0.0
 
 
 
