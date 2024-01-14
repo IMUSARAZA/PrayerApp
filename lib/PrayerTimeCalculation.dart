@@ -10,7 +10,7 @@ import 'package:geolocator/geolocator.dart';
 void main() async{
   Map<String, dynamic> prayerTimes = await PrayerTimeCalculation.calculatePrayerTimes();
 }
-
+Position? position;
 class PrayerTimeCalculation{
 
   
@@ -20,10 +20,10 @@ class PrayerTimeCalculation{
   final geolocator = GeolocatorPlatform.instance;
 
   // Detect coordinates
-  Position position = await geolocator.getCurrentPosition();
-  Coordinates coordinates = Coordinates(position.latitude, position.longitude);
-  print(position.latitude);
-  print(position.longitude);
+  position = await geolocator.getCurrentPosition();
+  Coordinates coordinates = Coordinates(position!.latitude, position!.longitude);
+  print(position!.latitude);
+  print(position!.longitude);
 
 
 

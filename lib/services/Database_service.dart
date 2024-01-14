@@ -65,4 +65,22 @@ class DatabaseService {
 
     return prayerDataList;
   }
+
+  Future<List<Map<String, dynamic>>> getPrayerDataInDateRange(String userId, DateTime startDate, DateTime endDate) async {
+  QuerySnapshot querySnapshot = await _prayerTrackingRef
+      .where('userID', isEqualTo: userId)
+      .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+      .where('date', isLessThanOrEqualTo: Timestamp.fromDate(endDate))
+      .get();
+
+  List<Map<String, dynamic>> prayerDataList = [];
+
+  querySnapshot.docs.forEach((doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    prayerDataList.add(data);
+  });
+
+  return prayerDataList;
+}
+
 }

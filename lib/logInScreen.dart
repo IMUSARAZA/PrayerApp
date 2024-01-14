@@ -152,11 +152,12 @@ class _logInScreenState extends State<logInScreen> {
                     ),
                   ),
                 ),
-          
-                customButton(title: "Log In", onPressed: () {
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(70, 20, 65, 0),
+                  child: customButton(title: "Log In", onPressed: () {
                     logIn();
                   },),
-          
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

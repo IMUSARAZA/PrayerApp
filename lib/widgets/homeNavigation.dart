@@ -5,6 +5,7 @@ import 'package:prayerapp/MasjidLocator.dart';
 import 'package:prayerapp/PrayerTimeCalculation.dart';
 import 'package:prayerapp/const/appColors.dart';
 import 'package:prayerapp/homePage.dart';
+import 'package:prayerapp/moreSettings.dart';
 import 'package:prayerapp/prayerRecordScreen.dart';
 import 'package:prayerapp/qiblaFinder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,19 +32,22 @@ class _homeNavigationState extends State<homeNavigation> {
   int _selectedIndex = 0;
   late homePage _homePage;
   late MapPage _mapPage;
+  late moreSettings _moreSettingsPage;
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
     _homePage = homePage(userLocation: widget.location);
-    _mapPage = MapPage(longitude: 31.4030481379793, latitude: 74.2128057566662);
+    _mapPage = MapPage(position!.longitude, position!.latitude);
+    _moreSettingsPage = moreSettings();
 
     final screens = [
       _homePage,
       const PrayerRecordScreen(),
       const qiblaFinder(),
       _mapPage,
+      _moreSettingsPage,
     ];
 
     return MaterialApp(

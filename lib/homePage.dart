@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jhijri/jHijri.dart';
 import 'package:prayerapp/CountdownTimerWidget.dart';
 import 'package:prayerapp/Hadith.dart';
+import 'package:prayerapp/SignUpData.dart';
 import 'package:prayerapp/compass/loading_indicator.dart';
 import 'package:prayerapp/const/appColors.dart';
 import 'package:prayerapp/main.dart';
+import 'package:prayerapp/services/Database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -27,6 +30,7 @@ Duration remainingTime = Duration.zero;
 List<Hadith> hadithList = [];
 
 class _homePageState extends State<homePage> {
+  DatabaseService _databaseService = DatabaseService();
   bool? isCheckedbox = false;
   Color? checkColor = const Color(0xFF2E2E2E);
 
@@ -40,8 +44,7 @@ class _homePageState extends State<homePage> {
     calculate();
     nextCalculate();
     updateRemainingTime();
-    loadPrayerConfirmationStatus();
-
+    loadPrayerData();
     super.initState();
   }
 
@@ -50,39 +53,100 @@ class _homePageState extends State<homePage> {
     super.dispose();
   }
 
-  void loadPrayerConfirmationStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String currentDate = DateTime.now().toString().split(" ")[0];
-    bool? confirmationStatus =
-        prefs.getBool('$currentDate-$nextPrayerName-confirmation');
-    if (confirmationStatus != null) {
-      setState(() {
-        isCheckedbox = confirmationStatus;
-        checkColor = isCheckedbox!
-            ? appColors.appBasic
-            : const Color.fromARGB(255, 45, 38, 38);
-      });
-    } else {
-      // If no confirmation status is found, set the default values
-      setState(() {
-        isCheckedbox = false;
-        checkColor = const Color.fromARGB(255, 45, 38, 38);
-      });
-    }
+  void loadPrayerData() async {
+    // String userId = loggedInUserID!;
+    String userId = 'musarazach@gmail.com';
+    
+    
+    DateTime endDate = DateTime.now();
+    DateTime startDate = endDate.subtract(Duration(days: 1));
+
+    List<Map<String, dynamic>> prayerData =
+        await _databaseService.getPrayerDataInDateRange(userId, startDate, endDate);
+
+        // print(prayerData);
+
+    updateUIWithPrayerData(prayerData);
+
   }
 
-  void savePrayerConfirmationStatus(String prayerName, bool isConfirmed) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String currentDate = DateTime.now().toString().split(" ")[0];
-    prefs.setBool('$currentDate-$prayerName-confirmation', isConfirmed);
+
+  
+
+  void updateUIWithPrayerData(List<Map<String, dynamic>> prayerData) {
+  for (var data in prayerData) {
+    String? prayerName = data['prayerName'];
+    bool isOffered = data['isOffered'];
+    DateTime storedDate = (data['date'] as Timestamp).toDate();
+
+    if (prayerName != null && isSameDay(DateTime.now(), storedDate)) {
+      updateCheckboxState(prayerName, isOffered);
+    }
   }
+}
+
+void updateCheckboxState(String? prayerName, bool isOffered) {
+  if (prayerName == null) {
+    return; // handle the case where prayerName is null
+  }
+
+  switch (prayerName) {
+    case 'Fajr':
+      setState(() {
+        isCheckedbox = isOffered;
+        checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
+      });
+      break;
+    case 'Zuhar':
+      setState(() {
+        isCheckedbox = isOffered;
+        checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
+      });
+      break;
+    case 'Asr':
+      setState(() {
+        isCheckedbox = isOffered;
+        checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
+      });
+      break;
+    case 'Maghrib':
+      setState(() {
+        isCheckedbox = isOffered;
+        checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
+      });
+      break;
+    case 'Isha':
+      setState(() {
+        isCheckedbox = isOffered;
+        checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
+      });
+      break;
+  }
+}
+
+
+  bool isSameDay(DateTime date1, DateTime date2) {
+  return date1.year == date2.year &&
+      date1.month == date2.month &&
+      date1.day == date2.day;
+}
+
+  void savePrayerData(String prayerName, bool isOffered) async {
+    String userId = 'musarazach@gmail.com';
+    await _databaseService.addPrayerData(
+      userId: userId,
+      prayerName: prayerName,
+      isOffered: isOffered,
+    );
+  }
+
+  
 
   void updateRemainingTime() {
     DateTime now = DateTime.now();
     if (nextRemainingTime == null) {
       return;
     }
-    // remainingTime = nextRemainingTime!.difference(now);
     remainingTime = calculateRemainingTime();
   }
 
@@ -214,8 +278,7 @@ class _homePageState extends State<homePage> {
                                                   : const Color.fromARGB(
                                                       255, 45, 38, 38);
                                             });
-                                            // Save prayer confirmation status when the checkbox is checked or unchecked
-                                            savePrayerConfirmationStatus(
+                                            savePrayerData(
                                                 nextPrayerName!, value!);
                                           },
                                         ),

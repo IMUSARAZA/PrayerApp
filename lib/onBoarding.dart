@@ -38,23 +38,15 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User? _user;
 
+  
+
 class _onBoardingState extends State<onBoarding> {
   
 
   @override
   void initState() {
     super.initState();
-    _auth.authStateChanges().listen((event) {
-      setState(() {
-        _user = event;
-      });
-      if (_user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => SignUpData(_user!.email!)),
-        );
-      }
-    });
+   
   } 
 
   @override

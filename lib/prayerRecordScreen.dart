@@ -1,24 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:prayerapp/PrayerTimeCalculation.dart';
+import 'package:intl/intl.dart';
 import 'package:prayerapp/const/appColors.dart';
 import 'package:prayerapp/main.dart';
 import 'package:prayerapp/services/Database_service.dart';
-import 'package:prayerapp/widgets/homeNavigation.dart';
 
 void main() {
   runApp(const PrayerRecordScreen());
 }
 
-
 class PrayerRecordScreen extends StatefulWidget {
-
-  const PrayerRecordScreen({Key? key,}) : super(key: key);
+  const PrayerRecordScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<PrayerRecordScreen> createState() => _PrayerRecordScreenState();
-
 }
 
 class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
@@ -39,81 +37,90 @@ class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
   late DatabaseService _databaseService;
 
   List<Map<String, dynamic>> _cachedPrayerData = [];
-
+  Map<String, double> _dailyAverages = {};
 
   @override
-void initState() {
-  super.initState();
-  _databaseService = DatabaseService();
-  prayerTimesDislay();
-  loadPrayerData();
-  updateUIWithPrayerData(_cachedPrayerData); 
-}
+  void initState() {
+    super.initState();
+    _databaseService = DatabaseService();
+    prayerTimesDislay();
+    loadPrayerData();
+  }
+
+  void loadPrayerData() async {
+    String userId = 'musarazach@gmail.com';
+    if (_cachedPrayerData.isNotEmpty) {
+      updateUIWithPrayerData(_cachedPrayerData);
+    }
+
+    DateTime endDate = DateTime.now();
+    DateTime startDate = endDate.subtract(Duration(days: 6));
+
+    List<Map<String, dynamic>> prayerData =
+        await _databaseService.getPrayerDataInDateRange(userId, startDate, endDate);
+    print("Retrieved Prayer Data: $prayerData");
+
+    updateUIWithPrayerData(prayerData);
+    _cachedPrayerData = prayerData;
+
+    calculateDailyAverages();
+  }
 
 
 
-  void prayerTimesDislay(){
-
+  void prayerTimesDislay() {
     fajarTime = formatTime(prayerTimesFirst!['fajrTime']);
     zuharTime = formatTime(prayerTimesFirst!['dhuhrTime']);
     asarTime = formatTime(prayerTimesFirst!['asrTime']);
     maghribTime = formatTime(prayerTimesFirst!['maghribTime']);
     ishaTime = formatTime(prayerTimesFirst!['ishaTime']);
-
   }
 
   String formatTime(DateTime dateTime) {
-  String amPm = dateTime.hour < 12 ? 'AM' : 'PM';
-  int hour = dateTime.hour % 12 == 0 ? 12 : dateTime.hour % 12;
-  return '$hour:${dateTime.minute.toString().padLeft(2, '0')} $amPm';
-}
-
-void loadPrayerData() async {
-  String userId = 'musarazach@gmail.com'; 
-  if (_cachedPrayerData.isNotEmpty) {
-    updateUIWithPrayerData(_cachedPrayerData);
+    String amPm = dateTime.hour < 12 ? 'AM' : 'PM';
+    int hour = dateTime.hour % 12 == 0 ? 12 : dateTime.hour % 12;
+    return '$hour:${dateTime.minute.toString().padLeft(2, '0')} $amPm';
   }
 
-  List<Map<String, dynamic>> prayerData = await _databaseService.getPrayerData(userId);
-  print("Retrieved Prayer Data: $prayerData"); 
+  
 
-  updateUIWithPrayerData(prayerData);
-  _cachedPrayerData = prayerData;
-}
 
+  
 
   void updateUIWithPrayerData(List<Map<String, dynamic>> prayerData) {
-  for (var data in prayerData) {
-    String prayerName = data['prayerName'];
-    bool isOffered = data['isOffered'];
-    DateTime storedDate = (data['date'] as Timestamp).toDate();
+    for (var data in prayerData) {
+      String prayerName = data['prayerName'];
+      bool isOffered = data['isOffered'];
+      DateTime storedDate = (data['date'] as Timestamp).toDate();
 
-    if (isSameDay(DateTime.now(), storedDate)) {
-      updateCheckboxState(prayerName, isOffered);
+      if (isSameDay(DateTime.now(), storedDate)) {
+        updateCheckboxState(prayerName, isOffered);
+      }
     }
   }
+
+  bool isSameDay(DateTime date1, DateTime date2) {
+  print('Date1: $date1, Date2: $date2');
+  return date1.year == date2.year &&
+      date1.month == date2.month &&
+      date1.day == date2.day;
 }
 
-bool isSameDay(DateTime date1, DateTime date2) {
-  return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
-}
+  void resetCheckboxStates() {
+    setState(() {
+      isCheckedbox1 = false;
+      isCheckedbox2 = false;
+      isCheckedbox3 = false;
+      isCheckedbox4 = false;
+      isCheckedbox5 = false;
 
-void resetCheckboxStates() {
-  setState(() {
-    isCheckedbox1 = false;
-    isCheckedbox2 = false;
-    isCheckedbox3 = false;
-    isCheckedbox4 = false;
-    isCheckedbox5 = false;
-
-    checkColor1 = Colors.black;
-    checkColor2 = Colors.black;
-    checkColor3 = Colors.black;
-    checkColor4 = Colors.black;
-    checkColor5 = Colors.black;
-  });
-}
-
+      checkColor1 = Colors.black;
+      checkColor2 = Colors.black;
+      checkColor3 = Colors.black;
+      checkColor4 = Colors.black;
+      checkColor5 = Colors.black;
+    });
+  }
 
   void updateCheckboxState(String prayerName, bool isOffered) {
     switch (prayerName) {
@@ -151,13 +158,55 @@ void resetCheckboxStates() {
   }
 
   void savePrayerData(String prayerName, bool isOffered) async {
-    String userId = 'musarazach@gmail.com'; 
+    String userId = 'musarazach@gmail.com';
     await _databaseService.addPrayerData(
       userId: userId,
       prayerName: prayerName,
       isOffered: isOffered,
     );
   }
+
+   void calculateDailyAverages() {
+    DateTime today = DateTime.now();
+    _dailyAverages = {}; 
+
+    for (int i = 0; i < 7; i++) {
+      DateTime date = today.subtract(Duration(days: i));
+      double average = calculateAverageForDay(date);
+
+      _dailyAverages[getDayName(date)] = average;
+    }
+
+    setState(() {});
+  }
+
+  double calculateAverageForDay(DateTime date) {
+  DateTime dateWithoutTime = DateTime(date.year, date.month, date.day);
+
+  List<Map<String, dynamic>> prayersForDay = _cachedPrayerData
+      .where((data) => isSameDay(dateWithoutTime, (data['date'] as Timestamp).toDate()))
+      .toList();
+
+  if (prayersForDay.isEmpty) {
+    return 0.0;
+  }
+
+  int totalPrayers = prayersForDay.length;
+  int completedPrayers =
+      prayersForDay.where((data) => data['isOffered']).length;
+
+  print('Date: $dateWithoutTime, Total Prayers: $totalPrayers, Completed Prayers: $completedPrayers');
+
+  return totalPrayers > 0 ? completedPrayers / totalPrayers : 0.0;
+}
+
+
+
+
+  String getDayName(DateTime date) {
+  return DateFormat('EEE').format(date);
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +251,8 @@ void resetCheckboxStates() {
                   checkColor3 = value ? appColors.appBasic : appColors.appBasic;
                 });
               }),
-              buildPrayerRow("Maghrib", "$maghribTime.", isCheckedbox4, checkColor4,
+              buildPrayerRow(
+                  "Maghrib", "$maghribTime.", isCheckedbox4, checkColor4,
                   (value, color) {
                 setState(() {
                   isCheckedbox4 = value;
@@ -250,13 +300,20 @@ void resetCheckboxStates() {
                                   ),
                                 ],
                               ),
-                              buildLinearProgress("Sun", 0.5),
-                              buildLinearProgress("Mon", 0.8),
-                              buildLinearProgress("Tue", 0.5),
-                              buildLinearProgress("Wed", 0.8),
-                              buildLinearProgress("Thu", 0.5),
-                              buildLinearProgress("Fri", 0.7),
-                              buildLinearProgress("Sat", 0.4),
+                              buildLinearProgress(
+                                  "Sun", _dailyAverages["Sun"] ?? 0.0),
+                              buildLinearProgress(
+                                  "Mon", _dailyAverages["Mon"] ?? 0.0),
+                              buildLinearProgress(
+                                  "Tue", _dailyAverages["Tue"] ?? 0.0),
+                              buildLinearProgress(
+                                  "Wed", _dailyAverages["Wed"] ?? 0.0),
+                              buildLinearProgress(
+                                  "Thu", _dailyAverages["Thu"] ?? 0.0),
+                              buildLinearProgress(
+                                  "Fri", _dailyAverages["Fri"] ?? 0.0),
+                              buildLinearProgress(
+                                  "Sat", _dailyAverages["Sat"] ?? 0.0),
                             ],
                           ),
                         ),
@@ -273,63 +330,62 @@ void resetCheckboxStates() {
   }
 
   Widget buildPrayerRow(
-  String prayerName,
-  String prayerTime,
-  bool isChecked,
-  Color checkColor,
-  void Function(bool, Color) onChanged,
-) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: [
-      Padding(
-        padding: const EdgeInsets.fromLTRB(20, 24, 30, 0),
-        child: Transform.scale(
-          scale: 1.5,
-          child: Checkbox(
-            value: isChecked,
-            activeColor: checkColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50.0),
-              side: BorderSide(color: appColors.appBasic),
-            ),
-            onChanged: (value) async {
-              onChanged(value!, checkColor);
-              // Save prayer data when the checkbox is checked or unchecked
-              savePrayerData(prayerName, value);
-            },
-          ),
-        ),
-      ),
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
-          child: Text(
-            prayerName,
-            style: GoogleFonts.roboto(
-              color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
+    String prayerName,
+    String prayerTime,
+    bool isChecked,
+    Color checkColor,
+    void Function(bool, Color) onChanged,
+  ) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 24, 30, 0),
+          child: Transform.scale(
+            scale: 1.5,
+            child: Checkbox(
+              value: isChecked,
+              activeColor: checkColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50.0),
+                side: BorderSide(color: appColors.appBasic),
+              ),
+              onChanged: (value) async {
+                onChanged(value!, checkColor);
+                savePrayerData(prayerName, value);
+              },
             ),
           ),
         ),
-      ),
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
-          child: Text(
-            prayerTime,
-            style: GoogleFonts.roboto(
-              color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
+            child: Text(
+              prayerName,
+              style: GoogleFonts.roboto(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
-      ),
-    ],
-  );
-}
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
+            child: Text(
+              prayerTime,
+              style: GoogleFonts.roboto(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget buildLinearProgress(String title, double value) {
     return Row(
@@ -366,5 +422,3 @@ void resetCheckboxStates() {
     );
   }
 }
-
-

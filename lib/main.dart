@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:prayerapp/PrayerTimeCalculation.dart';
@@ -9,6 +10,9 @@ import 'package:prayerapp/signUpScreen.dart';
 import 'package:prayerapp/widgets/homeNavigation.dart';
 
 late Map<String, dynamic> ?prayerTimesFirst;
+User? _user;
+final FirebaseAuth _auth = FirebaseAuth.instance;
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +32,7 @@ void main() async {
 }
 
 
+
 class Myapp extends StatefulWidget {
 
   const Myapp({Key? key,}) : super(key: key);
@@ -41,4 +46,16 @@ class _MyappState extends State<Myapp> {
   Widget build(BuildContext context) {
     return Container();
   }
+}
+
+void checkAuthState() {
+  _auth.authStateChanges().listen((User? user) {
+    if (user == null) {
+      // User is signed out
+      print('User is signed out (Print statement from main)');
+    } else {
+      // User is signed in
+      print('User is signed in (Print statement from main)');
+    }
+  });
 }
