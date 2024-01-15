@@ -62,15 +62,23 @@ dependencies:
   plugin_platform_interface: ^2.1.7
   flutter_map: ^2.0.0
   latlong2: ^0.8.0
-  # google_mobile_ads: 
+  google_mobile_ads: 
   flutter_local_notifications:
-  sliding_up_panel: 
+  sliding_up_panel:
+  flutter_cache_manager:
 
 
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.13.1"
   flutter_test:
     sdk: flutter
+  
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "lib/Assets/salat.png"    
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -95,6 +103,7 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
     - lib\Assets\splashScreen.jpg
+    - lib\Assets\splash.jpg
     - lib\Assets\salat.png
     - lib\assets\salat2.png
     - lib\assets\seenEye.jpg

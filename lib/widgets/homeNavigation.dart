@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_islamic_icons/flutter_islamic_icons.dart';
@@ -12,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // late Map<String, dynamic>? prayerTimesFirst;
 
+String? loggedInUser = FirebaseAuth.instance.currentUser!.email!;
 
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +41,7 @@ class _homeNavigationState extends State<homeNavigation> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     _homePage = homePage(userLocation: widget.location);
-    _mapPage = MapPage(position!.longitude, position!.latitude);
+    _mapPage = MapPage(position!.latitude, position!.longitude);
     _moreSettingsPage = moreSettings();
 
     final screens = [

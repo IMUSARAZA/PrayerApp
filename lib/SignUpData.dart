@@ -19,6 +19,7 @@ void main() async {
 }
 
 String? dropdownValue;
+String? signedInUser;
 
 class SignUpData extends StatefulWidget {
   final String userEmail;
@@ -43,6 +44,11 @@ class _SignUpDataState extends State<SignUpData> {
 
   String? gendervalue, location;
 
+  @override
+  void initState() {
+    signedInUser = widget.userEmail;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     GlobalKey<CSCPickerState> _cscPickerKey = GlobalKey();
@@ -353,8 +359,8 @@ class _SignUpDataState extends State<SignUpData> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => homeNavigation(cityValue)),
-                        );
+                              builder: (context) => homeNavigation(cityValue),
+                        ));
                       } else {
                         print("Passwords do not matched");
                       }

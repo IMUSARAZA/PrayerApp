@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:prayerapp/const/appColors.dart';
 import 'package:prayerapp/main.dart';
 import 'package:prayerapp/services/Database_service.dart';
+import 'package:prayerapp/widgets/homeNavigation.dart';
 
 void main() {
   runApp(const PrayerRecordScreen());
@@ -47,8 +48,18 @@ class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
     loadPrayerData();
   }
 
+  // Add a method to delete prayer data
+  void deletePrayerData(String prayerName) async {
+    String userId = loggedInUser!;
+  await _databaseService.deletePrayerData(
+    userId: userId,
+    prayerName: prayerName,
+  );
+}
+
+
   void loadPrayerData() async {
-    String userId = 'musarazach@gmail.com';
+    String userId = loggedInUser!;
     if (_cachedPrayerData.isNotEmpty) {
       updateUIWithPrayerData(_cachedPrayerData);
     }
@@ -64,6 +75,10 @@ class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
     _cachedPrayerData = prayerData;
 
     calculateDailyAverages();
+
+    setState(() {
+      
+    });
   }
 
 
@@ -100,7 +115,7 @@ class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
   }
 
   bool isSameDay(DateTime date1, DateTime date2) {
-  print('Date1: $date1, Date2: $date2');
+  // print('Date1: $date1, Date2: $date2');
   return date1.year == date2.year &&
       date1.month == date2.month &&
       date1.day == date2.day;
@@ -158,7 +173,7 @@ class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
   }
 
   void savePrayerData(String prayerName, bool isOffered) async {
-    String userId = 'musarazach@gmail.com';
+    String userId = loggedInUser!;
     await _databaseService.addPrayerData(
       userId: userId,
       prayerName: prayerName,
@@ -191,14 +206,15 @@ class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
     return 0.0;
   }
 
-  int totalPrayers = prayersForDay.length;
+  int totalPrayers = 5; // Fixed number of prayers per day
   int completedPrayers =
       prayersForDay.where((data) => data['isOffered']).length;
 
-  print('Date: $dateWithoutTime, Total Prayers: $totalPrayers, Completed Prayers: $completedPrayers');
+  print('Date: $dateWithoutTime, Completed Prayers: $completedPrayers');
 
-  return totalPrayers > 0 ? completedPrayers / totalPrayers : 0.0;
+  return completedPrayers / totalPrayers;
 }
+
 
 
 
@@ -352,7 +368,14 @@ class _PrayerRecordScreenState extends State<PrayerRecordScreen> {
               ),
               onChanged: (value) async {
                 onChanged(value!, checkColor);
-                savePrayerData(prayerName, value);
+
+                // If the checkbox is unchecked, delete the entry from Firestore
+                if (!value) {
+                  deletePrayerData(prayerName);
+                } else {
+                  // If the checkbox is checked, save the entry to Firestore
+                  savePrayerData(prayerName, value);
+                }
               },
             ),
           ),

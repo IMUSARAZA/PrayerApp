@@ -25,122 +25,129 @@ class _OTPState extends State<OTP> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: SizedBox(
+    return Scaffold(
+      body: SizedBox(
+        child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(),
+                padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
                 child: Image.asset(
                   "lib/Assets/salat.png",
-                  height: screenHeight / 2,
+                  height: screenHeight / 2 - 100,
                   width: screenWidth / 2,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
-                child: Text("OTP Code",
-                    textAlign: TextAlign.left,
-                    overflow: TextOverflow.clip,
-                    style: GoogleFonts.roboto(
-                        fontSize: 48,
-                        fontWeight: FontWeight.w700,
-                        fontStyle: FontStyle.normal,
-                        color: const Color(0xff000000))),
-              ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(40, 10, 0, 40),
-                child: Text(
-                  "We have sent the OTP Code on to your given Email address",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontStyle: FontStyle.normal,
-                    fontSize: 16,
-                    color: Color(0xff000000),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
                   ),
-                ),
-              ),
-              Center(
-                child: OTPTextField(
-                  outlineBorderRadius: 5,
-                  keyboardType: TextInputType.number,
-                  otpFieldStyle: OtpFieldStyle(
-                    enabledBorderColor: appColors.appBasic,
-                    focusBorderColor: appColors.appBasic,
-                    backgroundColor: const Color(0xffffffff),
-                  ),
-                  length: 4,
-                  width: MediaQuery.of(context).size.width - 50,
-                  fieldWidth: 50,
-                  style: const TextStyle(
-                      fontSize: 20, color: Color.fromARGB(255, 0, 0, 0)),
-                  textFieldAlignment: MainAxisAlignment.spaceAround,
-                  fieldStyle: FieldStyle.underline,
-                  onChanged: (value) => otpEntered = int.parse(value),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 40, left: 40),
-                child: Row(
-                  children: [
-                    const Text(
-                      "Didn't receive the code yet? ",
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 20, 10, 10),
+                    child: Text(
+                      "OTP Code",
+                      overflow: TextOverflow.clip,
                       style: TextStyle(
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 40,
+                        fontFamily: 'Roboto',
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 10, 0, 40),
+                    child: Text(
+                      "We have sent the OTP Code on to your given Email address",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
                         fontStyle: FontStyle.normal,
-                        fontSize: 14,
+                        fontSize: 16,
                         color: Color(0xff000000),
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        getOTP();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  ),
+                  Center(
+                    child: OTPTextField(
+                      outlineBorderRadius: 5,
+                      keyboardType: TextInputType.number,
+                      otpFieldStyle: OtpFieldStyle(
+                        enabledBorderColor: appColors.appBasic,
+                        focusBorderColor: appColors.appBasic,
+                        backgroundColor: const Color(0xffffffff),
                       ),
-                      child: const Text(
-                        "Resend",
-                        style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: appColors.appBasic,
+                      length: 4,
+                      width: MediaQuery.of(context).size.width - 50,
+                      fieldWidth: 50,
+                      style: const TextStyle(
+                          fontSize: 20, color: Color.fromARGB(255, 0, 0, 0)),
+                      textFieldAlignment: MainAxisAlignment.spaceAround,
+                      fieldStyle: FieldStyle.underline,
+                      onChanged: (value) => otpEntered = int.parse(value),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 40, left: 40),
+                    child: Row(
+                      children: [
+                        const Text(
+                          "Didn't receive the code yet? ",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontStyle: FontStyle.normal,
+                            fontSize: 14,
+                            color: Color(0xff000000),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            getOTP();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          ),
+                          child: const Text(
+                            "Resend",
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              color: appColors.appBasic,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(70, 20, 65, 0),
+                    child: Material(
+                      child: InkWell(
+                        child: customButton(
+                          title: 'Enter',
+                          onPressed: () {
+                            print(widget.otpCode);
+                            print(otpEntered);
+                            if (otpEntered == widget.otpCode) {
+                              print("OTP Verified Successfully");
+                              const Text('OTP Verified Successfully!');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        SignUpData(widget.userEmail)),
+                              );
+                            } else {
+                              const Text('Invalid OTP');
+                            }
+                          },
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(70, 20, 65, 0),
-                child: Material(
-                  child: InkWell(
-                    child: customButton(
-                      title: 'Enter',
-                      onPressed: () {
-                        print(widget.otpCode);
-                        print(otpEntered);
-                        if (otpEntered == widget.otpCode) {
-                          print("OTP Verified Successfully");
-                          const Text('OTP Verified Successfully!');
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    SignUpData(widget.userEmail)),
-                          );
-                        } else {
-                          const Text('Invalid OTP');
-                        }
-                      },
-                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),

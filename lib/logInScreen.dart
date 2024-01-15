@@ -17,6 +17,7 @@ void main() async {
 
 User? _user;
 bool? userPassCorrect;
+String? justLoggedInUser;
 
 class logInScreen extends StatefulWidget {
   const logInScreen({super.key});
@@ -195,6 +196,7 @@ class _logInScreenState extends State<logInScreen> {
 
     if (_user != null) {
       print("Logged In Succesfully");
+      justLoggedInUser = emailController.text;
       setState(() {
         Navigator.push(
           context,

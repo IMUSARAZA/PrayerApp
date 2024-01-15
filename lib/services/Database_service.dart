@@ -83,4 +83,18 @@ class DatabaseService {
   return prayerDataList;
 }
 
+Future<void> deletePrayerData({
+    required String userId,
+    required String prayerName,
+  }) async {
+    QuerySnapshot querySnapshot = await _prayerTrackingRef
+        .where('userID', isEqualTo: userId)
+        .where('prayerName', isEqualTo: prayerName)
+        .get();
+
+    querySnapshot.docs.forEach((doc) {
+      doc.reference.delete();
+    });
+  }
+
 }

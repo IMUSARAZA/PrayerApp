@@ -159,7 +159,7 @@ class _signUpScreenState extends State<signUpScreen> {
     otpCode = generateOTP();
     try {
       final mailer = Mailer(
-          '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');
+          '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');
       final toAddress = Address(extractEmail());
       final fromAddress = Address('insightimaan@gmail.com');
       final content = Content('text/plain',

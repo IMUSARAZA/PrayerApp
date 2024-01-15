@@ -11,6 +11,8 @@ import 'package:prayerapp/compass/loading_indicator.dart';
 import 'package:prayerapp/const/appColors.dart';
 import 'package:prayerapp/main.dart';
 import 'package:prayerapp/services/Database_service.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:prayerapp/widgets/homeNavigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,10 +26,12 @@ class homePage extends StatefulWidget {
 
 var bookslug = 'sahih-bukhari';
 var number = 5;
-String? nextPrayerName, nextPrayerTime, islamicDate;
+String? nextPrayerName, nextPrayerTime, islamicDate, prayerNameForDB;
 DateTime? nextRemainingTime;
 Duration remainingTime = Duration.zero;
 List<Hadith> hadithList = [];
+late Timer _timer;
+
 
 class _homePageState extends State<homePage> {
   DatabaseService _databaseService = DatabaseService();
@@ -40,6 +44,9 @@ class _homePageState extends State<homePage> {
       print('Program war gya');
       return;
     }
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    checkNextPrayerTime();
+  });
 
     calculate();
     nextCalculate();
@@ -53,94 +60,105 @@ class _homePageState extends State<homePage> {
     super.dispose();
   }
 
+  void checkNextPrayerTime() {
+  DateTime now = DateTime.now();
+
+  if (nextRemainingTime != null && now.isAfter(nextRemainingTime!)) {
+    nextCalculate();
+    updateRemainingTime();
+    loadPrayerData();
+  }
+}
+
+  void deletePrayerData(String prayerName) async {
+    String userId = loggedInUser!;
+    await _databaseService.deletePrayerData(
+      userId: userId,
+      prayerName: prayerName,
+    );
+  }
+
   void loadPrayerData() async {
-    // String userId = loggedInUserID!;
-    String userId = 'musarazach@gmail.com';
-    
-    
+    String userId = loggedInUser!;
+
     DateTime endDate = DateTime.now();
     DateTime startDate = endDate.subtract(Duration(days: 1));
 
-    List<Map<String, dynamic>> prayerData =
-        await _databaseService.getPrayerDataInDateRange(userId, startDate, endDate);
+    List<Map<String, dynamic>> prayerData = await _databaseService
+        .getPrayerDataInDateRange(userId, startDate, endDate);
 
-        // print(prayerData);
+    print(prayerData);
 
     updateUIWithPrayerData(prayerData);
-
   }
-
-
-  
 
   void updateUIWithPrayerData(List<Map<String, dynamic>> prayerData) {
-  for (var data in prayerData) {
-    String? prayerName = data['prayerName'];
-    bool isOffered = data['isOffered'];
-    DateTime storedDate = (data['date'] as Timestamp).toDate();
+    for (var data in prayerData) {
+      String? prayerName = data['prayerName'];
+      bool isOffered = data['isOffered'];
+      DateTime storedDate = (data['date'] as Timestamp).toDate();
 
-    if (prayerName != null && isSameDay(DateTime.now(), storedDate)) {
-      updateCheckboxState(prayerName, isOffered);
+      if (prayerName == nextPrayerName && isSameDay(DateTime.now(), storedDate)) {
+        updateCheckboxState(prayerName, isOffered);
+      }
     }
   }
-}
 
-void updateCheckboxState(String? prayerName, bool isOffered) {
-  if (prayerName == null) {
-    return; // handle the case where prayerName is null
+  void updateCheckboxState(String? prayerName, bool isOffered) {
+    if (prayerName == null) {
+      return;
+    }
+    print('Prayer name $prayerName');
+    
+
+    switch (prayerName) {
+      case 'Fajr':
+        setState(() {
+          isCheckedbox = isOffered;
+          checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
+        });
+        break;
+      case 'Zuhar':
+        setState(() {
+          isCheckedbox = isOffered;
+          checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
+        });
+        break;
+      case 'Asr':
+        setState(() {
+          isCheckedbox = isOffered;
+          checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
+        });
+        break;
+      case 'Maghrib':
+        setState(() {
+          isCheckedbox = isOffered;
+          checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
+        });
+        break;
+      case 'Isha':
+        setState(() {
+          isCheckedbox = isOffered;
+          checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
+        });
+        break;
+    }
   }
-
-  switch (prayerName) {
-    case 'Fajr':
-      setState(() {
-        isCheckedbox = isOffered;
-        checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
-      });
-      break;
-    case 'Zuhar':
-      setState(() {
-        isCheckedbox = isOffered;
-        checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
-      });
-      break;
-    case 'Asr':
-      setState(() {
-        isCheckedbox = isOffered;
-        checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
-      });
-      break;
-    case 'Maghrib':
-      setState(() {
-        isCheckedbox = isOffered;
-        checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
-      });
-      break;
-    case 'Isha':
-      setState(() {
-        isCheckedbox = isOffered;
-        checkColor = isOffered ? appColors.appBasic : appColors.appBasic;
-      });
-      break;
-  }
-}
-
 
   bool isSameDay(DateTime date1, DateTime date2) {
-  return date1.year == date2.year &&
-      date1.month == date2.month &&
-      date1.day == date2.day;
-}
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
 
   void savePrayerData(String prayerName, bool isOffered) async {
-    String userId = 'musarazach@gmail.com';
+    String userId = loggedInUser!;
     await _databaseService.addPrayerData(
       userId: userId,
       prayerName: prayerName,
       isOffered: isOffered,
     );
   }
-
-  
 
   void updateRemainingTime() {
     DateTime now = DateTime.now();
@@ -207,7 +225,7 @@ void updateCheckboxState(String? prayerName, bool isOffered) {
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(10, 5, 0, 0),
                                 child: Container(
-                                  width: 100,
+                                  width: 110,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
@@ -270,7 +288,7 @@ void updateCheckboxState(String? prayerName, bool isOffered) {
                                             borderRadius:
                                                 BorderRadius.circular(50),
                                           ),
-                                          onChanged: (value) {
+                                          onChanged: (value) async {
                                             setState(() {
                                               isCheckedbox = value;
                                               checkColor = value!
@@ -278,8 +296,25 @@ void updateCheckboxState(String? prayerName, bool isOffered) {
                                                   : const Color.fromARGB(
                                                       255, 45, 38, 38);
                                             });
-                                            savePrayerData(
-                                                nextPrayerName!, value!);
+
+                                            DateTime currentDate =
+                                                DateTime.now();
+                                            if (value!) {
+                                              // Checkbox is checked, save prayer data
+                                              await _databaseService
+                                                  .addPrayerData(
+                                                userId: loggedInUser!,
+                                                prayerName: nextPrayerName!,
+                                                isOffered: value,
+                                              );
+                                            } else {
+                                              // Checkbox is unchecked, delete prayer data for the current date
+                                              await _databaseService
+                                                  .deletePrayerData(
+                                                userId: loggedInUser!,
+                                                prayerName: nextPrayerName!,
+                                              );
+                                            }
                                           },
                                         ),
                                       ),
@@ -509,11 +544,11 @@ void updateCheckboxState(String? prayerName, bool isOffered) {
   }
 
   Future<List<Hadith>> fetchData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int lastFetchTime = prefs.getInt('lastFetchTime') ?? 0;
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // int lastFetchTime = prefs.getInt('lastFetchTime') ?? 0;
 
-    if (DateTime.now().millisecondsSinceEpoch - lastFetchTime >
-        24 * 60 * 60 * 1000) {
+    // if (DateTime.now().millisecondsSinceEpoch - lastFetchTime >
+    //     24 * 60 * 60 * 1000) {
       var apiKey =
           '\$2y\$10\$EKIdJOrdsb3yxKEZYyWlte2WdRm8R0rtGJYiTGRKvm1ZvWhz39e';
       var response = await http.get(Uri.parse(
@@ -527,16 +562,18 @@ void updateCheckboxState(String? prayerName, bool isOffered) {
         hadithList =
             datalist.map((element) => Hadith.fromJson(element)).toList();
 
-        prefs.setInt('lastFetchTime', DateTime.now().millisecondsSinceEpoch);
+        // prefs.setInt('lastFetchTime', DateTime.now().millisecondsSinceEpoch);
 
-        return hadithList;
+        
       } else {
         throw Exception('Failed to load');
-      }
-    } else {
-      return hadithList;
     }
-  }
+    // } else {
+      return hadithList;
+    //}
+      }
+      
+  
 
   void nextCalculate() {
     DateTime now = DateTime.now();
@@ -573,4 +610,5 @@ void updateCheckboxState(String? prayerName, bool isOffered) {
     int hour = dateTime.hour % 12 == 0 ? 12 : dateTime.hour % 12;
     return '$hour:${dateTime.minute.toString().padLeft(2, '0')} $amPm';
   }
+
 }
